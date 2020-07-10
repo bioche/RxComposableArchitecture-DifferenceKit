@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="collection view cell content view" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Uneaten View Controller-->
+        <scene sceneID="dYJ-s2-h9F">
+            <objects>
+                <viewController storyboardIdentifier="main" id="yTU-yX-Y8c" customClass="UneatenViewController" customModule="UneatenIngredients" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="w8A-Px-3aO">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FKi-sS-2Kt">
+                                <rect key="frame" x="179.5" y="821" width="55" height="30"/>
+                                <state key="normal" title="Validate"/>
+                            </button>
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="Q0b-Rq-7Ue">
+                                <rect key="frame" x="0.0" y="44" width="414" height="769"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="T8b-wr-2Ah">
+                                    <size key="itemSize" width="128" height="128"/>
+                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                </collectionViewFlowLayout>
+                                <cells>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="category" id="aa9-O6-uJx" customClass="UneatenCategoryCollectionViewCell" customModule="UneatenIngredients" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="0.0" width="128" height="128"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="CIc-Ya-4EJ">
+                                            <rect key="frame" x="0.0" y="0.0" width="128" height="128"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="mQ8-Ks-qMS">
+                                                    <rect key="frame" x="37.5" y="18" width="53" height="51"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="51" id="4SU-pG-PGc"/>
+                                                        <constraint firstAttribute="width" constant="53" id="Yn7-1t-gMw"/>
+                                                    </constraints>
+                                                </imageView>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lm0-C5-Quv">
+                                                    <rect key="frame" x="43" y="99" width="42" height="21"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="lm0-C5-Quv" firstAttribute="centerX" secondItem="CIc-Ya-4EJ" secondAttribute="centerX" id="31R-O8-x22"/>
+                                                <constraint firstItem="lm0-C5-Quv" firstAttribute="top" secondItem="mQ8-Ks-qMS" secondAttribute="bottom" priority="999" constant="30" id="AA8-i3-Sdb"/>
+                                                <constraint firstItem="mQ8-Ks-qMS" firstAttribute="top" secondItem="CIc-Ya-4EJ" secondAttribute="top" constant="18" id="DBx-6Q-2Fq"/>
+                                                <constraint firstItem="mQ8-Ks-qMS" firstAttribute="centerX" secondItem="CIc-Ya-4EJ" secondAttribute="centerX" id="WXj-hG-XoP"/>
+                                                <constraint firstItem="lm0-C5-Quv" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="CIc-Ya-4EJ" secondAttribute="leading" constant="20" id="mbZ-D1-AyR"/>
+                                                <constraint firstAttribute="bottom" secondItem="lm0-C5-Quv" secondAttribute="bottom" constant="8" id="s0b-fU-sNv"/>
+                                            </constraints>
+                                        </collectionViewCellContentView>
+                                        <connections>
+                                            <outlet property="imageView" destination="mQ8-Ks-qMS" id="Szy-LR-YKF"/>
+                                            <outlet property="titleLabel" destination="lm0-C5-Quv" id="Y9N-1s-j8C"/>
+                                        </connections>
+                                    </collectionViewCell>
+                                </cells>
+                            </collectionView>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="RIc-lQ-Mcl">
+                                <rect key="frame" x="197" y="826" width="20" height="20"/>
+                            </activityIndicatorView>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstItem="Q0b-Rq-7Ue" firstAttribute="top" secondItem="hfS-hu-cN5" secondAttribute="top" id="2jY-EL-mbA"/>
+                            <constraint firstItem="RIc-lQ-Mcl" firstAttribute="centerX" secondItem="FKi-sS-2Kt" secondAttribute="centerX" id="Aht-6m-CHk"/>
+                            <constraint firstItem="FKi-sS-2Kt" firstAttribute="centerX" secondItem="hfS-hu-cN5" secondAttribute="centerX" id="BmA-ce-Zmf"/>
+                            <constraint firstItem="hfS-hu-cN5" firstAttribute="bottom" secondItem="FKi-sS-2Kt" secondAttribute="bottom" constant="11" id="WGm-bQ-jDb"/>
+                            <constraint firstItem="RIc-lQ-Mcl" firstAttribute="centerY" secondItem="FKi-sS-2Kt" secondAttribute="centerY" id="ZoC-Ad-EYq"/>
+                            <constraint firstItem="Q0b-Rq-7Ue" firstAttribute="leading" secondItem="hfS-hu-cN5" secondAttribute="leading" id="jnZ-eM-j54"/>
+                            <constraint firstItem="hfS-hu-cN5" firstAttribute="trailing" secondItem="Q0b-Rq-7Ue" secondAttribute="trailing" id="nr4-CB-LGP"/>
+                            <constraint firstItem="FKi-sS-2Kt" firstAttribute="top" secondItem="Q0b-Rq-7Ue" secondAttribute="bottom" constant="8" id="uvx-0o-6iC"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="hfS-hu-cN5"/>
+                    </view>
+                    <connections>
+                        <outlet property="activityIndicator" destination="RIc-lQ-Mcl" id="9fC-qv-gvG"/>
+                        <outlet property="categoriesCollectionView" destination="Q0b-Rq-7Ue" id="zEQ-eW-meb"/>
+                        <outlet property="validateButton" destination="FKi-sS-2Kt" id="6aq-Lr-cMp"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="d9b-tM-GUy" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="137.68115942028987" y="133.92857142857142"/>
+        </scene>
+    </scenes>
+</document>
