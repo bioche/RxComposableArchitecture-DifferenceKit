@@ -11,90 +11,6 @@ import ComposableArchitecture
 import RxCocoa
 import RxSwift
 
-protocol UneatenCategoriesService {
-    func getPossibleCategories() -> Single<[UneatenCategory]>
-    
-    func getSelectedCategoriesKeys() -> Single<[String]>
-    func save(selectedCategoriesKeys: [String]) -> Single<Void>
-}
-
-struct UneatenCategoriesMockService: UneatenCategoriesService {
-    static var selectedKeys = [String]()
-    
-    func getPossibleCategories() -> Single<[UneatenCategory]> {
-        .just([UneatenCategory(key: "chickenKey", name: "chicken"), UneatenCategory(key: "SaladKey", name: "salad")])
-    }
-    
-    func getSelectedCategoriesKeys() -> Single<[String]> {
-        .just(Self.selectedKeys)
-    }
-    
-    func save(selectedCategoriesKeys: [String]) -> Single<Void> {
-        Self.selectedKeys = selectedCategoriesKeys
-        return Observable.just(())
-            .delay(.seconds(3), scheduler: MainScheduler())
-            .asSingle()
-    }
-}
-
-struct UneatenEnvironment {
-    let uneatenService: UneatenCategoriesService
-}
-
-struct UneatenCategory {
-    let key: String
-    let name: String
-    //let subcategories: [UneatenCategory] --> we ignore it for now
-}
-
-/// The state of the uneaten feature. Later mapped to the ViewState
-struct UneatenState {
-    var categoriesStates: [CategoryState]
-    /// Have the choices been saved
-    var saved: Bool
-    
-    var pendingValidation: Bool
-    
-    var selectedCategoriesKeys: [String] {
-        categoriesStates.compactMap { $0.isSelected ? $0.category.key : nil }
-    }
-}
-
-struct CategoryState: TCAIdentifiable {
-    
-    var id: String { category.key }
-    
-    let category: UneatenCategory
-    var isSelected: Bool
-    
-    func selected(_ isSelected: Bool) -> CategoryState {
-        .init(category: category, isSelected: isSelected)
-    }
-}
-
-/// The actions of the uneaten feature.
-enum UneatenAction {
-    case validateSelection
-    case toggleCategory(index: Int)
-    
-    case acknowledgeValidation
-}
-
-let uneatenReducer = Reducer<UneatenState, UneatenAction, UneatenEnvironment> { state, action, environment in
-    switch action {
-    case .validateSelection:
-        state.pendingValidation = true
-        return Effect(environment.uneatenService.save(selectedCategoriesKeys: state.selectedCategoriesKeys).asObservable()).map { .acknowledgeValidation }
-    case .toggleCategory(let index):
-        state.saved = false
-        state.categoriesStates[index].isSelected.toggle()
-    case .acknowledgeValidation:
-        state.saved = true
-        state.pendingValidation = false
-    }
-    return .none
-}
-
 // tableView
   // Section --> CategoryState
     // Header --> CategoryHeaderState (isSelected + image)
@@ -189,8 +105,6 @@ class UneatenViewController: UIViewController {
     
 }
 
-
-
 extension UneatenState {
     fileprivate var view: UneatenViewController.ViewState {
         let validateButtonTitle = saved || pendingValidation ? "Aucun changement" : "Valider la sélection"
@@ -200,59 +114,5 @@ extension UneatenState {
         let cellStates = categoriesStates.map { $0.view }
         
         return .init(validateButtonTitle: validateButtonTitle, validateButtonEnabled: validateButtonEnabled, validateButtonHidden: validateButtonHidden, activityIndicatorHidden: activityIndicatorHidden, cellStates: cellStates)
-    }
-}
-
-class UneatenCategoryCollectionViewCell: UICollectionViewCell {
-    struct ViewState: Equatable {
-        let imageName: String
-        let title: String
-        let tint: Color
-    }
-    
-    @IBOutlet weak var imageView: UIImageView!
-    @IBOutlet weak var titleLabel: UILabel!
-    
-    private let disposeBag = DisposeBag()
-    
-    var store: Store<CategoryState, Never>!
-    var viewStore: ViewStore<ViewState, Never>!
-    
-    func configure(store: Store<CategoryState, Never>) {
-        self.store = store
-        self.viewStore = ViewStore(store.scope(state: { $0.view }))
-        
-        imageView.image = UIImage(named: viewStore.imageName)
-        titleLabel.text = viewStore.title
-        viewStore.driver.tint.drive(onNext: { [weak self] in
-            self?.imageView.tintColor = $0.uiColor
-            self?.titleLabel.textColor = $0.uiColor
-        }).disposed(by: disposeBag)
-    }
-}
-
-extension CategoryState {
-    var view: UneatenCategoryCollectionViewCell.ViewState {
-        .init(imageName: "btn_close", title: category.name, tint: isSelected ? Color(uiColor: .green) : Color(uiColor: .black))
-    }
-}
-
-/// Codable struct for UIColor
-struct Color: Codable, Equatable {
-    var red: CGFloat = 0.0
-    var green: CGFloat = 0.0
-    var blue: CGFloat = 0.0
-    var alpha: CGFloat = 0.0
-    
-    /// Returns a UIColor from Color
-    var uiColor: UIColor {
-        return UIColor(red: red, green: green, blue: blue, alpha: alpha)
-    }
-    
-    /// Init a Color with a UIColor
-    ///
-    /// - Parameter uiColor: UIColor
-    init(uiColor: UIColor?) {
-        uiColor?.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
     }
 }
