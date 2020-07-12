@@ -1,0 +1,4 @@
+--> Application to test table / collection configurations (not too much because UIKit will be replaced soon)
+- Categories : to test action, add isFavorite check on the cell
+- On top of collection : View controller to add category with timer to see animation
+

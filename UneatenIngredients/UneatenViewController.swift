@@ -60,14 +60,16 @@ struct UneatenState {
     }
 }
 
-struct CategoryState {
+struct CategoryState: TCAIdentifiable {
+    
+    var id: String { category.key }
+    
     let category: UneatenCategory
     var isSelected: Bool
     
     func selected(_ isSelected: Bool) -> CategoryState {
         .init(category: category, isSelected: isSelected)
     }
-    
 }
 
 /// The actions of the uneaten feature.
@@ -92,6 +94,25 @@ let uneatenReducer = Reducer<UneatenState, UneatenAction, UneatenEnvironment> { 
     }
     return .none
 }
+
+// tableView
+  // Section --> CategoryState
+    // Header --> CategoryHeaderState (isSelected + image)
+    // TopCategoryCell --> [CategoryState]
+      // CollectionView
+        // CollectionCell --> CategoryState
+        // CollectionCell --> CategoryState
+
+
+// The collectionView can be hidden --> size variation
+
+// tableView
+  // TopCategoryCell
+    // headerView
+    // CollectionView
+      // CollectionCell
+      // CollectionCell
+
 
 class UneatenViewController: UIViewController {
     /// The state of the view. Should be as close as possible to the view contents. (just like PureAir Outputs)
@@ -148,12 +169,13 @@ class UneatenViewController: UIViewController {
         .disposed(by: disposeBag)
         
         // fill the collection with cell states
-        viewStore.driver.cellStates.drive(categoriesCollectionView.rx.items) { (collectionView, row, config) in
+        let categoriesStore = store.actionless.scope(state: { $0.categoriesStates })
+        categoriesStore.scopeForEach().drive(categoriesCollectionView.rx.items) { collectionView, row, categoryStore in
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "category", for: IndexPath(row: row, section: 0)) as? UneatenCategoryCollectionViewCell else {
                 assertionFailure()
                 return .init()
             }
-            cell.apply(viewState: config)
+            cell.configure(store: categoryStore)
             return cell
         }
         .disposed(by: disposeBag)
@@ -166,6 +188,8 @@ class UneatenViewController: UIViewController {
     }
     
 }
+
+
 
 extension UneatenState {
     fileprivate var view: UneatenViewController.ViewState {
@@ -189,11 +213,21 @@ class UneatenCategoryCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var titleLabel: UILabel!
     
-    func apply(viewState: ViewState) {
-        imageView.image = UIImage(named: viewState.imageName)
-        titleLabel.text = viewState.title
-        imageView.tintColor = viewState.tint.uiColor
-        titleLabel.textColor = viewState.tint.uiColor
+    private let disposeBag = DisposeBag()
+    
+    var store: Store<CategoryState, Never>!
+    var viewStore: ViewStore<ViewState, Never>!
+    
+    func configure(store: Store<CategoryState, Never>) {
+        self.store = store
+        self.viewStore = ViewStore(store.scope(state: { $0.view }))
+        
+        imageView.image = UIImage(named: viewStore.imageName)
+        titleLabel.text = viewStore.title
+        viewStore.driver.tint.drive(onNext: { [weak self] in
+            self?.imageView.tintColor = $0.uiColor
+            self?.titleLabel.textColor = $0.uiColor
+        }).disposed(by: disposeBag)
     }
 }
 
