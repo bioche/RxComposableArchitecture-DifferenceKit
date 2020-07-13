@@ -1,4 +1,8 @@
 --> Application to test table / collection configurations (not too much because UIKit will be replaced soon)
+- realize the same level of complexity as cookeat uneaten ingredients : collection inside table
 - Categories : to test action, add isFavorite check on the cell
-- On top of collection : View controller to add category with timer to see animation
+
+- On top of collection :
+-- View controller to add category with timer to see animation
+-- button to add text inside cells
 

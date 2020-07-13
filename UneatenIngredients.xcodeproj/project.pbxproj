@@ -22,6 +22,7 @@
 		4157C35924BB20BA00941098 /* CategoryCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4157C35824BB20BA00941098 /* CategoryCollectionViewCell.swift */; };
 		4157C35B24BB214000941098 /* CategoriesCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4157C35A24BB214000941098 /* CategoriesCore.swift */; };
 		4157C35E24BB226900941098 /* RxSectionedDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4157C35D24BB226900941098 /* RxSectionedDataSource.swift */; };
+		4157C36024BB3BE000941098 /* RxCollectionDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4157C35F24BB3BE000941098 /* RxCollectionDataSource.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,6 +41,7 @@
 		4157C35824BB20BA00941098 /* CategoryCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryCollectionViewCell.swift; sourceTree = "<group>"; };
 		4157C35A24BB214000941098 /* CategoriesCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoriesCore.swift; sourceTree = "<group>"; };
 		4157C35D24BB226900941098 /* RxSectionedDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RxSectionedDataSource.swift; sourceTree = "<group>"; };
+		4157C35F24BB3BE000941098 /* RxCollectionDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RxCollectionDataSource.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,6 +76,7 @@
 		4112206924B4A9270007FA30 /* UneatenIngredients */ = {
 			isa = PBXGroup;
 			children = (
+				4157C35F24BB3BE000941098 /* RxCollectionDataSource.swift */,
 				4157C35D24BB226900941098 /* RxSectionedDataSource.swift */,
 				4157C35C24BB217D00941098 /* UI */,
 				4112206A24B4A9270007FA30 /* AppDelegate.swift */,
@@ -186,6 +189,7 @@
 				4157C35B24BB214000941098 /* CategoriesCore.swift in Sources */,
 				4112206B24B4A9270007FA30 /* AppDelegate.swift in Sources */,
 				4112208824B4AF470007FA30 /* MenuViewController.swift in Sources */,
+				4157C36024BB3BE000941098 /* RxCollectionDataSource.swift in Sources */,
 				4157C35724BB206200941098 /* Color.swift in Sources */,
 				4157C35924BB20BA00941098 /* CategoryCollectionViewCell.swift in Sources */,
 				4112208124B4AB720007FA30 /* UneatenViewController.swift in Sources */,

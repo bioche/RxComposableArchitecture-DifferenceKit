@@ -8,6 +8,7 @@
 
 import UIKit
 import ComposableArchitecture
+import DifferenceKit
 import RxCocoa
 import RxSwift
 
@@ -85,24 +86,44 @@ class UneatenViewController: UIViewController {
         .disposed(by: disposeBag)
         
         // fill the collection with cell states
-        let categoriesStore = store.actionless.scope(state: { $0.categoriesStates })
-        categoriesStore.scopeForEach().drive(categoriesCollectionView.rx.items) { collectionView, row, categoryStore in
-            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "category", for: IndexPath(row: row, section: 0)) as? UneatenCategoryCollectionViewCell else {
+        let datasource = RxFlatCollectionDataSource<Store<CategoryState, Never>> { (collectionView, indexPath, categoryStore) -> UICollectionViewCell in
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "category", for: indexPath) as? UneatenCategoryCollectionViewCell else {
                 assertionFailure()
                 return .init()
             }
             cell.configure(store: categoryStore)
             return cell
         }
-        .disposed(by: disposeBag)
+    
+        store.actionless
+            .scope(state: { $0.categoriesStates })
+            .scopeForEach(shouldAvoidReload: { $0.isContentEqual(to: $1) })
+            .debug("scopeForEach")
+            .drive(categoriesCollectionView.rx.items(dataSource: datasource))
+            .disposed(by: disposeBag)
         
         // listen to the tapped index
         categoriesCollectionView.rx.itemSelected.subscribe(onNext: { [weak self] indexpath in
             self?.viewStore.send(.toggleCategory(index: indexpath.row))
         })
         .disposed(by: disposeBag)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+            self.viewStore.send(.append(text: "bsdfsdf sdfdsf"))
+        }
+    }
+}
+
+extension CategoryState: Differentiable { }
+
+extension Store: Differentiable where State: Differentiable {
+    public func isContentEqual(to source: Store<State, Action>) -> Bool {
+        ViewStore(self, removeDuplicates: { _, _ in false }).state.isContentEqual(to: ViewStore(source, removeDuplicates: { _, _ in false }).state)
     }
     
+    public var differenceIdentifier: State.DifferenceIdentifier {
+        ViewStore(self, removeDuplicates: { _, _ in false }).differenceIdentifier
+    }
 }
 
 extension UneatenState {

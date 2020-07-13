@@ -13,7 +13,7 @@ struct UneatenEnvironment {
     let uneatenService: UneatenCategoriesService
 }
 
-struct UneatenCategory {
+struct UneatenCategory: Equatable {
     let key: String
     let name: String
     //let subcategories: [UneatenCategory] --> we ignore it for now
@@ -32,11 +32,11 @@ struct UneatenState {
     }
 }
 
-struct CategoryState: TCAIdentifiable {
+struct CategoryState: TCAIdentifiable, Equatable {
     
     var id: String { category.key }
     
-    let category: UneatenCategory
+    var category: UneatenCategory
     var isSelected: Bool
     
     func selected(_ isSelected: Bool) -> CategoryState {
@@ -50,6 +50,8 @@ enum UneatenAction {
     case toggleCategory(index: Int)
     
     case acknowledgeValidation
+    
+    case append(text: String)
 }
 
 let uneatenReducer = Reducer<UneatenState, UneatenAction, UneatenEnvironment> { state, action, environment in
@@ -63,6 +65,11 @@ let uneatenReducer = Reducer<UneatenState, UneatenAction, UneatenEnvironment> { 
     case .acknowledgeValidation:
         state.saved = true
         state.pendingValidation = false
+    case .append(let text):
+        state.categoriesStates.indices.forEach {
+            let category = state.categoriesStates[$0].category
+            state.categoriesStates[$0].category = UneatenCategory(key: category.key, name: category.name + text)
+        }
     }
     return .none
 }

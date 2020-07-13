@@ -30,7 +30,10 @@ class UneatenCategoryCollectionViewCell: UICollectionViewCell {
         self.viewStore = ViewStore(store.scope(state: { $0.view }))
         
         imageView.image = UIImage(named: viewStore.imageName)
-        titleLabel.text = viewStore.title
+       // titleLabel.text = viewStore.title
+        viewStore.driver.title
+            .drive(titleLabel.rx.text)
+            .disposed(by: disposeBag)
         viewStore.driver.tint.drive(onNext: { [weak self] in
             self?.imageView.tintColor = $0.uiColor
             self?.titleLabel.textColor = $0.uiColor

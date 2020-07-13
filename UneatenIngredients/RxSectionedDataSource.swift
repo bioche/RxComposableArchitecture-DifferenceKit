@@ -37,8 +37,8 @@ class RxSectionedDataSource<Section: DifferentiableSection>: NSObject, RxTableVi
     private let disposeBag = DisposeBag()
     
     init(with animation: UITableView.RowAnimation = .fade,
-         headerCreation: @escaping (UITableView, Int, Section) -> UIView?,
-         cellCreation: @escaping (UITableView, IndexPath, CellModel) -> UITableViewCell) {
+         cellCreation: @escaping (UITableView, IndexPath, CellModel) -> UITableViewCell,
+         headerCreation: ((UITableView, Int, Section) -> UIView?)? = nil) {
         self.animation = animation
         self.cellCreation = cellCreation
         self.headerCreation = headerCreation
@@ -46,8 +46,8 @@ class RxSectionedDataSource<Section: DifferentiableSection>: NSObject, RxTableVi
     }
     
     init(with animation: UITableView.RowAnimation = .fade,
-         headerTitlesSource: @escaping (UITableView, Int, Section) -> String?,
-         cellCreation: @escaping (UITableView, IndexPath, CellModel) -> UITableViewCell) {
+         cellCreation: @escaping (UITableView, IndexPath, CellModel) -> UITableViewCell,
+         headerTitlesSource: ((UITableView, Int, Section) -> String?)? = nil) {
         self.animation = animation
         self.cellCreation = cellCreation
         self.headerTitlesSource = headerTitlesSource
