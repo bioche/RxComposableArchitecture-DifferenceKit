@@ -48,7 +48,7 @@
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lm0-C5-Quv">
                                                     <rect key="frame" x="20" y="99" width="70" height="20.5"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="width" constant="70" id="fbe-8c-ile"/>
+                                                        <constraint firstAttribute="width" priority="999" constant="70" id="fbe-8c-ile"/>
                                                     </constraints>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>

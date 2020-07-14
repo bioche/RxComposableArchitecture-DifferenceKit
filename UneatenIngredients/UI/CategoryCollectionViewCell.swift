@@ -22,18 +22,13 @@ class UneatenCategoryCollectionViewCell: UICollectionViewCell {
     
     private let disposeBag = DisposeBag()
     
-    var store: Store<CategoryState, Never>!
     var viewStore: ViewStore<ViewState, Never>!
     
-    func configure(store: Store<CategoryState, Never>) {
-        self.store = store
-        self.viewStore = ViewStore(store.scope(state: { $0.view }))
+    func configure(viewStore: ViewStore<ViewState, Never>) {
+        self.viewStore = viewStore
         
         imageView.image = UIImage(named: viewStore.imageName)
-       // titleLabel.text = viewStore.title
-        viewStore.driver.title
-            .drive(titleLabel.rx.text)
-            .disposed(by: disposeBag)
+        titleLabel.text = viewStore.title
         viewStore.driver.tint.drive(onNext: { [weak self] in
             self?.imageView.tintColor = $0.uiColor
             self?.titleLabel.textColor = $0.uiColor

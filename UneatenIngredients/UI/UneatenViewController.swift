@@ -91,7 +91,8 @@ class UneatenViewController: UIViewController {
                 assertionFailure()
                 return .init()
             }
-            cell.configure(store: categoryStore)
+            let viewStore = ViewStore(categoryStore.scope(state: { $0.view }))
+            cell.configure(viewStore: viewStore)
             return cell
         }
     
@@ -108,13 +109,19 @@ class UneatenViewController: UIViewController {
         })
         .disposed(by: disposeBag)
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-            self.viewStore.send(.append(text: "bsdfsdf sdfdsf"))
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            self.viewStore.send(.append(text: "bla bla bla"))
         }
     }
 }
 
-extension CategoryState: Differentiable { }
+extension CategoryState: Differentiable {
+    /// Use the content equality to take into account the changes that need a reload.
+    /// Here a change of name is the only change that necessitate a proper reload because it may alter the size of cells. However the selection state only changes the tint.
+    func isContentEqual(to source: CategoryState) -> Bool {
+        self.category.name == source.category.name
+    }
+}
 
 extension Store: Differentiable where State: Differentiable {
     public func isContentEqual(to source: Store<State, Action>) -> Bool {

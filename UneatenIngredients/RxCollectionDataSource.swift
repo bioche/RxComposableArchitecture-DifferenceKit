@@ -78,6 +78,8 @@ class RxSectionedCollectionDataSource<Section: DifferentiableSection>: NSObject,
         let target = observedEvent.element ?? []
         let changeset = StagedChangeset(source: source, target: target)
         
+        print("changeset : \(changeset)")
+        
         collectionView.reload(using: changeset) { data in
             self.values = data
         }
