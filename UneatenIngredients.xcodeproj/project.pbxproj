@@ -14,7 +14,6 @@
 		4112208124B4AB720007FA30 /* UneatenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4112207F24B4AB720007FA30 /* UneatenViewController.swift */; };
 		4112208624B4AE5C0007FA30 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4112208524B4AE5C0007FA30 /* Main.storyboard */; };
 		4112208824B4AF470007FA30 /* MenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4112208724B4AF470007FA30 /* MenuViewController.swift */; };
-		4157C34E24B9EFFF00941098 /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = 4157C34D24B9EFFF00941098 /* ComposableArchitecture */; };
 		4157C35024BB19ED00941098 /* todo.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4157C34F24BB19ED00941098 /* todo.txt */; };
 		4157C35324BB1F8D00941098 /* DifferenceKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4157C35224BB1F8D00941098 /* DifferenceKit */; };
 		4157C35524BB202700941098 /* UneatenCategoriesService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4157C35424BB202700941098 /* UneatenCategoriesService.swift */; };
@@ -23,6 +22,8 @@
 		4157C35B24BB214000941098 /* CategoriesCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4157C35A24BB214000941098 /* CategoriesCore.swift */; };
 		4157C35E24BB226900941098 /* RxSectionedDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4157C35D24BB226900941098 /* RxSectionedDataSource.swift */; };
 		4157C36024BB3BE000941098 /* RxCollectionDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4157C35F24BB3BE000941098 /* RxCollectionDataSource.swift */; };
+		4157C36E24BE5FEC00941098 /* Store+differentiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4157C36D24BE5FEC00941098 /* Store+differentiable.swift */; };
+		4157C37224BE62D000941098 /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = 4157C37124BE62D000941098 /* ComposableArchitecture */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,6 +43,8 @@
 		4157C35A24BB214000941098 /* CategoriesCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoriesCore.swift; sourceTree = "<group>"; };
 		4157C35D24BB226900941098 /* RxSectionedDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RxSectionedDataSource.swift; sourceTree = "<group>"; };
 		4157C35F24BB3BE000941098 /* RxCollectionDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RxCollectionDataSource.swift; sourceTree = "<group>"; };
+		4157C36D24BE5FEC00941098 /* Store+differentiable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Store+differentiable.swift"; sourceTree = "<group>"; };
+		4157C36F24BE605B00941098 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -49,8 +52,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4157C37224BE62D000941098 /* ComposableArchitecture in Frameworks */,
 				4157C35324BB1F8D00941098 /* DifferenceKit in Frameworks */,
-				4157C34E24B9EFFF00941098 /* ComposableArchitecture in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -60,6 +63,7 @@
 		4112205E24B4A9270007FA30 = {
 			isa = PBXGroup;
 			children = (
+				4157C36F24BE605B00941098 /* README.md */,
 				4112206924B4A9270007FA30 /* UneatenIngredients */,
 				4112206824B4A9270007FA30 /* Products */,
 			);
@@ -76,8 +80,7 @@
 		4112206924B4A9270007FA30 /* UneatenIngredients */ = {
 			isa = PBXGroup;
 			children = (
-				4157C35F24BB3BE000941098 /* RxCollectionDataSource.swift */,
-				4157C35D24BB226900941098 /* RxSectionedDataSource.swift */,
+				4157C36C24BE5FB600941098 /* RxDifferentable */,
 				4157C35C24BB217D00941098 /* UI */,
 				4112206A24B4A9270007FA30 /* AppDelegate.swift */,
 				4112207324B4A9290007FA30 /* Assets.xcassets */,
@@ -103,6 +106,16 @@
 			path = UI;
 			sourceTree = "<group>";
 		};
+		4157C36C24BE5FB600941098 /* RxDifferentable */ = {
+			isa = PBXGroup;
+			children = (
+				4157C35F24BB3BE000941098 /* RxCollectionDataSource.swift */,
+				4157C35D24BB226900941098 /* RxSectionedDataSource.swift */,
+				4157C36D24BE5FEC00941098 /* Store+differentiable.swift */,
+			);
+			path = RxDifferentable;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -120,8 +133,8 @@
 			);
 			name = UneatenIngredients;
 			packageProductDependencies = (
-				4157C34D24B9EFFF00941098 /* ComposableArchitecture */,
 				4157C35224BB1F8D00941098 /* DifferenceKit */,
+				4157C37124BE62D000941098 /* ComposableArchitecture */,
 			);
 			productName = UneatenIngredients;
 			productReference = 4112206724B4A9270007FA30 /* UneatenIngredients.app */;
@@ -152,8 +165,8 @@
 			);
 			mainGroup = 4112205E24B4A9270007FA30;
 			packageReferences = (
-				4157C34C24B9EFFF00941098 /* XCRemoteSwiftPackageReference "ComposableArchitecture" */,
 				4157C35124BB1F8D00941098 /* XCRemoteSwiftPackageReference "DifferenceKit" */,
+				4157C37024BE62D000941098 /* XCRemoteSwiftPackageReference "RxSwiftComposableArchitecture" */,
 			);
 			productRefGroup = 4112206824B4A9270007FA30 /* Products */;
 			projectDirPath = "";
@@ -191,6 +204,7 @@
 				4112208824B4AF470007FA30 /* MenuViewController.swift in Sources */,
 				4157C36024BB3BE000941098 /* RxCollectionDataSource.swift in Sources */,
 				4157C35724BB206200941098 /* Color.swift in Sources */,
+				4157C36E24BE5FEC00941098 /* Store+differentiable.swift in Sources */,
 				4157C35924BB20BA00941098 /* CategoryCollectionViewCell.swift in Sources */,
 				4112208124B4AB720007FA30 /* UneatenViewController.swift in Sources */,
 			);
@@ -384,14 +398,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		4157C34C24B9EFFF00941098 /* XCRemoteSwiftPackageReference "ComposableArchitecture" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "file:///Users/bioche/Documents/development/ios/PointFree/ComposableArchitecture";
-			requirement = {
-				branch = forEachStore;
-				kind = branch;
-			};
-		};
 		4157C35124BB1F8D00941098 /* XCRemoteSwiftPackageReference "DifferenceKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ra1028/DifferenceKit";
@@ -400,18 +406,26 @@
 				minimumVersion = 1.1.5;
 			};
 		};
+		4157C37024BE62D000941098 /* XCRemoteSwiftPackageReference "RxSwiftComposableArchitecture" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/bioche/RxSwiftComposableArchitecture";
+			requirement = {
+				branch = forEachScope;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		4157C34D24B9EFFF00941098 /* ComposableArchitecture */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 4157C34C24B9EFFF00941098 /* XCRemoteSwiftPackageReference "ComposableArchitecture" */;
-			productName = ComposableArchitecture;
-		};
 		4157C35224BB1F8D00941098 /* DifferenceKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 4157C35124BB1F8D00941098 /* XCRemoteSwiftPackageReference "DifferenceKit" */;
 			productName = DifferenceKit;
+		};
+		4157C37124BE62D000941098 /* ComposableArchitecture */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4157C37024BE62D000941098 /* XCRemoteSwiftPackageReference "RxSwiftComposableArchitecture" */;
+			productName = ComposableArchitecture;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

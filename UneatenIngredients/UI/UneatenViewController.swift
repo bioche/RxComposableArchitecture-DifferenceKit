@@ -12,25 +12,6 @@ import DifferenceKit
 import RxCocoa
 import RxSwift
 
-// tableView
-  // Section --> CategoryState
-    // Header --> CategoryHeaderState (isSelected + image)
-    // TopCategoryCell --> [CategoryState]
-      // CollectionView
-        // CollectionCell --> CategoryState
-        // CollectionCell --> CategoryState
-
-
-// The collectionView can be hidden --> size variation
-
-// tableView
-  // TopCategoryCell
-    // headerView
-    // CollectionView
-      // CollectionCell
-      // CollectionCell
-
-
 class UneatenViewController: UIViewController {
     /// The state of the view. Should be as close as possible to the view contents. (just like PureAir Outputs)
     fileprivate struct ViewState: Equatable {
@@ -38,9 +19,6 @@ class UneatenViewController: UIViewController {
         let validateButtonEnabled: Bool
         let validateButtonHidden: Bool
         let activityIndicatorHidden: Bool
-        
-        // this should probably not be here. Currently, each time a cell will be tapped, we will reload the whole collection view ...
-        let cellStates: [UneatenCategoryCollectionViewCell.ViewState]
     }
     
     /// The actions emitted by the view. Should be as close as possible to the user actions. (just like PureAir Inputs). In this case (and probably often) it matches the feature action.
@@ -96,11 +74,12 @@ class UneatenViewController: UIViewController {
             return cell
         }
     
-        store.actionless
-            .scope(state: { $0.categoriesStates })
-            .scopeForEach(shouldAvoidReload: { $0.isContentEqual(to: $1) })
+        // we bind the store to the table view cells using differenceKit.
+        store.actionless // remove the action --> No action on cell
+            .scope(state: { $0.categoriesStates }) // --> just simplify the store to a simple array of categories
+            .scopeForEach(shouldAvoidReload: { $0.isContentEqual(to: $1) }) // --> Create one store for each category
             .debug("scopeForEach")
-            .drive(categoriesCollectionView.rx.items(dataSource: datasource))
+            .drive(categoriesCollectionView.rx.items(dataSource: datasource)) // --> Bind to the datasource --> The stores will be set in the cells
             .disposed(by: disposeBag)
         
         // listen to the tapped index
@@ -109,6 +88,7 @@ class UneatenViewController: UIViewController {
         })
         .disposed(by: disposeBag)
         
+        // Just a dummy test of the cell size increase
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             self.viewStore.send(.append(text: "bla bla bla"))
         }
@@ -123,24 +103,13 @@ extension CategoryState: Differentiable {
     }
 }
 
-extension Store: Differentiable where State: Differentiable {
-    public func isContentEqual(to source: Store<State, Action>) -> Bool {
-        ViewStore(self, removeDuplicates: { _, _ in false }).state.isContentEqual(to: ViewStore(source, removeDuplicates: { _, _ in false }).state)
-    }
-    
-    public var differenceIdentifier: State.DifferenceIdentifier {
-        ViewStore(self, removeDuplicates: { _, _ in false }).differenceIdentifier
-    }
-}
-
 extension UneatenState {
     fileprivate var view: UneatenViewController.ViewState {
         let validateButtonTitle = saved || pendingValidation ? "Aucun changement" : "Valider la sélection"
         let validateButtonEnabled = !saved
         let validateButtonHidden = pendingValidation
         let activityIndicatorHidden = !pendingValidation
-        let cellStates = categoriesStates.map { $0.view }
         
-        return .init(validateButtonTitle: validateButtonTitle, validateButtonEnabled: validateButtonEnabled, validateButtonHidden: validateButtonHidden, activityIndicatorHidden: activityIndicatorHidden, cellStates: cellStates)
+        return .init(validateButtonTitle: validateButtonTitle, validateButtonEnabled: validateButtonEnabled, validateButtonHidden: validateButtonHidden, activityIndicatorHidden: activityIndicatorHidden)
     }
 }

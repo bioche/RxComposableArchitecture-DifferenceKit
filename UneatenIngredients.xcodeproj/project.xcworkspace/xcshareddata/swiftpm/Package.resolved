@@ -2,15 +2,6 @@
   "object": {
     "pins": [
       {
-        "package": "swift-composable-architecture",
-        "repositoryURL": "/Users/bioche/Documents/development/ios/PointFree/ComposableArchitecture",
-        "state": {
-          "branch": "forEachStore",
-          "revision": "d4fb4e3a68ff77271a1233de5136f071e6b9ebb3",
-          "version": null
-        }
-      },
-      {
         "package": "DifferenceKit",
         "repositoryURL": "https://github.com/ra1028/DifferenceKit",
         "state": {
@@ -26,6 +17,15 @@
           "branch": null,
           "revision": "002d325b0bdee94e7882e1114af5ff4fe1e96afa",
           "version": "5.1.1"
+        }
+      },
+      {
+        "package": "swift-composable-architecture",
+        "repositoryURL": "https://github.com/bioche/RxSwiftComposableArchitecture",
+        "state": {
+          "branch": "forEachScope",
+          "revision": "e59261059f6c9526d4ae638ba584dad399f9e4a4",
+          "version": null
         }
       }
     ]
