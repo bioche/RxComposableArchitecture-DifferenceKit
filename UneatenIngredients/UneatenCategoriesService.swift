@@ -20,7 +20,7 @@ struct UneatenCategoriesMockService: UneatenCategoriesService {
     static var selectedKeys = [String]()
     
     func getPossibleCategories() -> Single<[UneatenCategory]> {
-        .just([UneatenCategory(key: "chickenKey", name: "chicken"), UneatenCategory(key: "SaladKey", name: "salad")])
+        .just([UneatenCategory(key: "chickenKey", name: "chicken", subcategories: []), UneatenCategory(key: "SaladKey", name: "salad", subcategories: [])])
     }
     
     func getSelectedCategoriesKeys() -> Single<[String]> {

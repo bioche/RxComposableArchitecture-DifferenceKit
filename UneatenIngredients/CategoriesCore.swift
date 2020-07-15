@@ -16,7 +16,7 @@ struct UneatenEnvironment {
 struct UneatenCategory: Equatable {
     let key: String
     let name: String
-    //let subcategories: [UneatenCategory] --> we ignore it for now
+    let subcategories: [UneatenCategory]
 }
 
 /// The state of the uneaten feature. Later mapped to the ViewState
@@ -28,20 +28,21 @@ struct UneatenState {
     var pendingValidation: Bool
     
     var selectedCategoriesKeys: [String] {
-        categoriesStates.compactMap { $0.isSelected ? $0.category.key : nil }
+        categoriesStates.compactMap { $0.isSelected ? $0.id : nil }
+    }
+    
+    var groups: [CategoryGroupState] {
+        categoriesStates.map { .topCategory($0) }
     }
 }
 
 struct CategoryState: TCAIdentifiable, Equatable {
     
-    var id: String { category.key }
-    
-    var category: UneatenCategory
+    let id: String
+    var name: String
     var isSelected: Bool
     
-    func selected(_ isSelected: Bool) -> CategoryState {
-        .init(category: category, isSelected: isSelected)
-    }
+    var substates: [CategoryState]
 }
 
 /// The actions of the uneaten feature.
@@ -67,8 +68,7 @@ let uneatenReducer = Reducer<UneatenState, UneatenAction, UneatenEnvironment> { 
         state.pendingValidation = false
     case .append(let text):
         state.categoriesStates.indices.forEach {
-            let category = state.categoriesStates[$0].category
-            state.categoriesStates[$0].category = UneatenCategory(key: category.key, name: category.name + text)
+            state.categoriesStates[$0].name.append(contentsOf: text)
         }
     }
     return .none

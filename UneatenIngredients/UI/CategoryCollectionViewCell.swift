@@ -38,6 +38,6 @@ class UneatenCategoryCollectionViewCell: UICollectionViewCell {
 
 extension CategoryState {
     var view: UneatenCategoryCollectionViewCell.ViewState {
-        .init(imageName: "btn_close", title: category.name, tint: isSelected ? Color(uiColor: .green) : Color(uiColor: .black))
+        .init(imageName: "btn_close", title: name, tint: isSelected ? Color(uiColor: .green) : Color(uiColor: .black))
     }
 }

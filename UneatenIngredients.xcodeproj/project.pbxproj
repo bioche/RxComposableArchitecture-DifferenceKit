@@ -14,6 +14,7 @@
 		4112208124B4AB720007FA30 /* UneatenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4112207F24B4AB720007FA30 /* UneatenViewController.swift */; };
 		4112208624B4AE5C0007FA30 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4112208524B4AE5C0007FA30 /* Main.storyboard */; };
 		4112208824B4AF470007FA30 /* MenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4112208724B4AF470007FA30 /* MenuViewController.swift */; };
+		414E7AEB24BF03C9002E3165 /* SectionedUneatenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 414E7AEA24BF03C9002E3165 /* SectionedUneatenViewController.swift */; };
 		4157C35024BB19ED00941098 /* todo.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4157C34F24BB19ED00941098 /* todo.txt */; };
 		4157C35324BB1F8D00941098 /* DifferenceKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4157C35224BB1F8D00941098 /* DifferenceKit */; };
 		4157C35524BB202700941098 /* UneatenCategoriesService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4157C35424BB202700941098 /* UneatenCategoriesService.swift */; };
@@ -24,6 +25,8 @@
 		4157C36024BB3BE000941098 /* RxCollectionDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4157C35F24BB3BE000941098 /* RxCollectionDataSource.swift */; };
 		4157C36E24BE5FEC00941098 /* Store+differentiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4157C36D24BE5FEC00941098 /* Store+differentiable.swift */; };
 		4157C37224BE62D000941098 /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = 4157C37124BE62D000941098 /* ComposableArchitecture */; };
+		41EA4B3A24BF2EBE0060D591 /* SectionHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 41EA4B3824BF2EBE0060D591 /* SectionHeaderView.xib */; };
+		41EA4B3B24BF2EBE0060D591 /* SectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41EA4B3924BF2EBE0060D591 /* SectionHeaderView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +39,7 @@
 		4112207F24B4AB720007FA30 /* UneatenViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UneatenViewController.swift; sourceTree = "<group>"; };
 		4112208524B4AE5C0007FA30 /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		4112208724B4AF470007FA30 /* MenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuViewController.swift; sourceTree = "<group>"; };
+		414E7AEA24BF03C9002E3165 /* SectionedUneatenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionedUneatenViewController.swift; sourceTree = "<group>"; };
 		4157C34F24BB19ED00941098 /* todo.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = todo.txt; sourceTree = "<group>"; };
 		4157C35424BB202700941098 /* UneatenCategoriesService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UneatenCategoriesService.swift; sourceTree = "<group>"; };
 		4157C35624BB206200941098 /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
@@ -45,6 +49,8 @@
 		4157C35F24BB3BE000941098 /* RxCollectionDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RxCollectionDataSource.swift; sourceTree = "<group>"; };
 		4157C36D24BE5FEC00941098 /* Store+differentiable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Store+differentiable.swift"; sourceTree = "<group>"; };
 		4157C36F24BE605B00941098 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		41EA4B3824BF2EBE0060D591 /* SectionHeaderView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SectionHeaderView.xib; sourceTree = "<group>"; };
+		41EA4B3924BF2EBE0060D591 /* SectionHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SectionHeaderView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,10 +104,13 @@
 		4157C35C24BB217D00941098 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				41EA4B3924BF2EBE0060D591 /* SectionHeaderView.swift */,
+				41EA4B3824BF2EBE0060D591 /* SectionHeaderView.xib */,
 				4112207E24B4AB720007FA30 /* uneaten.storyboard */,
 				4112208724B4AF470007FA30 /* MenuViewController.swift */,
 				4112207F24B4AB720007FA30 /* UneatenViewController.swift */,
 				4157C35824BB20BA00941098 /* CategoryCollectionViewCell.swift */,
+				414E7AEA24BF03C9002E3165 /* SectionedUneatenViewController.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -183,6 +192,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4112207724B4A9290007FA30 /* LaunchScreen.storyboard in Resources */,
+				41EA4B3A24BF2EBE0060D591 /* SectionHeaderView.xib in Resources */,
 				4112208024B4AB720007FA30 /* uneaten.storyboard in Resources */,
 				4112207424B4A9290007FA30 /* Assets.xcassets in Resources */,
 				4112208624B4AE5C0007FA30 /* Main.storyboard in Resources */,
@@ -203,6 +213,8 @@
 				4112206B24B4A9270007FA30 /* AppDelegate.swift in Sources */,
 				4112208824B4AF470007FA30 /* MenuViewController.swift in Sources */,
 				4157C36024BB3BE000941098 /* RxCollectionDataSource.swift in Sources */,
+				414E7AEB24BF03C9002E3165 /* SectionedUneatenViewController.swift in Sources */,
+				41EA4B3B24BF2EBE0060D591 /* SectionHeaderView.swift in Sources */,
 				4157C35724BB206200941098 /* Color.swift in Sources */,
 				4157C36E24BE5FEC00941098 /* Store+differentiable.swift in Sources */,
 				4157C35924BB20BA00941098 /* CategoryCollectionViewCell.swift in Sources */,

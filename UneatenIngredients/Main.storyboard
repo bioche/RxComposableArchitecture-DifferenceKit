@@ -20,15 +20,22 @@
                                 <rect key="frame" x="112" y="438" width="190" height="30"/>
                                 <state key="normal" title="Display uneaten ingredients"/>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uSh-Zn-oFd">
+                                <rect key="frame" x="81" y="476" width="252" height="30"/>
+                                <state key="normal" title="Display grouped uneaten ingredients"/>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstItem="ubu-bQ-Ega" firstAttribute="centerX" secondItem="G5b-z6-Qmd" secondAttribute="centerX" id="6xM-PY-qX0"/>
                             <constraint firstItem="ubu-bQ-Ega" firstAttribute="centerY" secondItem="G5b-z6-Qmd" secondAttribute="centerY" id="6zx-rU-ARS"/>
+                            <constraint firstItem="uSh-Zn-oFd" firstAttribute="top" secondItem="ubu-bQ-Ega" secondAttribute="bottom" constant="8" id="Eos-zC-gGl"/>
+                            <constraint firstItem="uSh-Zn-oFd" firstAttribute="centerX" secondItem="G5b-z6-Qmd" secondAttribute="centerX" id="WDV-Lx-uqS"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="G5b-z6-Qmd"/>
                     </view>
                     <connections>
+                        <outlet property="groupedUneatenButton" destination="uSh-Zn-oFd" id="XAr-UD-Yyh"/>
                         <outlet property="uneatenButton" destination="ubu-bQ-Ega" id="bV7-Bf-VoI"/>
                     </connections>
                 </viewController>
