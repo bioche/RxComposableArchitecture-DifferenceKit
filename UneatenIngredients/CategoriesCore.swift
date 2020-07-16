@@ -8,6 +8,7 @@
 
 import Foundation
 import ComposableArchitecture
+import DifferenceKit
 
 struct UneatenEnvironment {
     let uneatenService: UneatenCategoriesService
@@ -20,7 +21,7 @@ struct UneatenCategory: Equatable {
 }
 
 /// The state of the uneaten feature. Later mapped to the ViewState
-struct UneatenState {
+struct UneatenState: Equatable {
     var categoriesStates: [CategoryState]
     /// Have the choices been saved
     var saved: Bool
@@ -32,7 +33,16 @@ struct UneatenState {
     }
     
     var groups: [CategoryGroupState] {
-        categoriesStates.map { .topCategory($0) }
+        var standaloneCategories = [CategoryState]()
+        let topCategories: [CategoryGroupState] =
+            categoriesStates.compactMap {
+                guard !$0.substates.isEmpty else {
+                    standaloneCategories.append($0)
+                    return nil
+                }
+                return .topCategory($0)
+            }
+        return [.standaloneCategories(standaloneCategories)] + topCategories
     }
 }
 
@@ -43,6 +53,14 @@ struct CategoryState: TCAIdentifiable, Equatable {
     var isSelected: Bool
     
     var substates: [CategoryState]
+}
+
+extension CategoryState: Differentiable {
+    /// Use the content equality to take into account the changes that need a reload.
+    /// Here a change of name is the only change that necessitate a proper reload because it may alter the size of cells. However the selection state only changes the tint.
+    func isContentEqual(to source: CategoryState) -> Bool {
+        name == source.name
+    }
 }
 
 /// The actions of the uneaten feature.
@@ -67,9 +85,11 @@ let uneatenReducer = Reducer<UneatenState, UneatenAction, UneatenEnvironment> { 
         state.saved = true
         state.pendingValidation = false
     case .append(let text):
-        state.categoriesStates.indices.forEach {
-            state.categoriesStates[$0].name.append(contentsOf: text)
+        var firstsubCategories = state.categoriesStates.first?.substates ?? []
+        firstsubCategories.indices.forEach {
+            firstsubCategories[$0].name.append(contentsOf: text)
         }
+        state.categoriesStates[safe: 0]?.substates = firstsubCategories
     }
     return .none
 }

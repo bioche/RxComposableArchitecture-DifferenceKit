@@ -29,6 +29,9 @@ class UneatenCategoryCollectionViewCell: UICollectionViewCell {
         
         imageView.image = UIImage(named: viewStore.imageName)
         titleLabel.text = viewStore.title
+//        viewStore.driver.title.drive(onNext: { [weak self] in
+//            self?.titleLabel.text = $0
+//        }).disposed(by: disposeBag)
         viewStore.driver.tint.drive(onNext: { [weak self] in
             self?.imageView.tintColor = $0.uiColor
             self?.titleLabel.textColor = $0.uiColor

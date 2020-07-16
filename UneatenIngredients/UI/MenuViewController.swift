@@ -44,6 +44,12 @@ class MenuViewController: UIViewController {
         
         groupedUneatenButton.rx.tap.asDriver()
             .drive(onNext: { [weak self] in
+                
+                let standaloneCategories = [
+                    CategoryState(id: "fishKey", name: "Fish", isSelected: false, substates: []),
+                    CategoryState(id: "shellfishKey", name: "Shellfish", isSelected: false, substates: [])
+                ]
+                
                 let meatSubCategories = [
                     CategoryState(id: "beefKey", name: "beef", isSelected: false, substates: []),
                     CategoryState(id: "turkeyKey", name: "turkey", isSelected: false, substates: []),
@@ -56,7 +62,7 @@ class MenuViewController: UIViewController {
                     CategoryState(id: "butterKey", name: "butter", isSelected: false, substates: [])
                 ]
                 
-                let initialState = UneatenState(categoriesStates: [CategoryState(id: "meatKey", name: "meats", isSelected: false, substates: meatSubCategories), CategoryState(id: "milkyKey", name: "milky stuff", isSelected: false, substates: milkySubCategories)], saved: true, pendingValidation: false)
+                let initialState = UneatenState(categoriesStates: standaloneCategories + [CategoryState(id: "meatKey", name: "meats", isSelected: false, substates: meatSubCategories), CategoryState(id: "milkyKey", name: "milky stuff", isSelected: false, substates: milkySubCategories)], saved: true, pendingValidation: false)
                 let store = ComposableArchitecture.Store<UneatenState, UneatenAction>(initialState: initialState, reducer: uneatenReducer, environment: UneatenEnvironment(uneatenService: UneatenCategoriesMockService()))
                 let uneatenController = SectionedUneatenViewController.create(store: store)
                 self?.navigationController?.pushViewController(uneatenController, animated: true)

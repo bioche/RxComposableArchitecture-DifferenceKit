@@ -30,7 +30,8 @@ struct StoreDifferentiableSection<State: DifferentiableSection>: DifferentiableS
     let elements: [Store<State.Collection.Element, Never>]
     
     init<C: Swift.Collection>(source: StoreDifferentiableSection<State>, elements: C) where C.Element == Self.Collection.Element {
-        fatalError("see if necessary but I don't see why ...")
+        self.store = source.store
+        self.elements = Array(elements)
     }
     
     init(store: Store<State, Never>) {

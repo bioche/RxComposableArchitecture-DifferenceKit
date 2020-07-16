@@ -95,14 +95,6 @@ class UneatenViewController: UIViewController {
     }
 }
 
-extension CategoryState: Differentiable {
-    /// Use the content equality to take into account the changes that need a reload.
-    /// Here a change of name is the only change that necessitate a proper reload because it may alter the size of cells. However the selection state only changes the tint.
-    func isContentEqual(to source: CategoryState) -> Bool {
-        self.name == source.name
-    }
-}
-
 extension UneatenState {
     fileprivate var view: UneatenViewController.ViewState {
         let validateButtonTitle = saved || pendingValidation ? "Aucun changement" : "Valider la sélection"

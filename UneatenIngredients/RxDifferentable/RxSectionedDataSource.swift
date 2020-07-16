@@ -13,11 +13,19 @@ import DifferenceKit
 
 extension Array {
     public subscript(safe index: Int) -> Element? {
-        guard index >= 0, index < endIndex else {
-            return nil
-        }
+        get {
+            guard index >= 0, index < endIndex else {
+                return nil
+            }
 
-        return self[index]
+            return self[index]
+        }
+        set {
+            guard index >= 0, index < endIndex, let newValue = newValue else {
+                return
+            }
+            self[index] = newValue
+        }
     }
 }
 

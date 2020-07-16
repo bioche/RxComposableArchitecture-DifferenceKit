@@ -15,6 +15,15 @@ import RxSwift
 enum CategoryGroupState: Equatable {
     case standaloneCategories([CategoryState])
     case topCategory(CategoryState)
+    
+    var isStandalone: Bool {
+        switch self {
+        case .standaloneCategories:
+            return true
+        case .topCategory:
+            return false
+        }
+    }
 }
 
 extension CategoryGroupState: TCAIdentifiable {
@@ -30,7 +39,13 @@ extension CategoryGroupState: TCAIdentifiable {
 
 extension CategoryGroupState: DifferentiableSection {
     init<C>(source: Self, elements: C) where C : Collection, C.Element == Self.Collection.Element {
-        fatalError("shouldn't be necessary")
+        switch source {
+        case .standaloneCategories:
+            self = .standaloneCategories(Array(elements))
+        case .topCategory(var topCategory):
+            topCategory.substates = Array(elements)
+            self = .topCategory(topCategory)
+        }
     }
     
     func isContentEqual(to source: Self) -> Bool {
@@ -55,6 +70,7 @@ class SectionedUneatenViewController: UIViewController {
         let validateButtonEnabled: Bool
         let validateButtonHidden: Bool
         let activityIndicatorHidden: Bool
+        let headerIndices: [Int]
     }
     
     /// The actions emitted by the view. Should be as close as possible to the user actions. (just like PureAir Inputs). In this case (and probably often) it matches the feature action.
@@ -102,8 +118,7 @@ class SectionedUneatenViewController: UIViewController {
         categoriesCollectionView.register(UINib(nibName: "SectionHeaderView", bundle: .main), forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "SectionHeaderView")
        // categoriesCollectionView.register(SectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "SectionHeaderView")
         
-        let flow = categoriesCollectionView.collectionViewLayout as! UICollectionViewFlowLayout
-        flow.headerReferenceSize = CGSize(width: 30, height: 60)
+        self.categoriesCollectionView.delegate = self
         
         // fill the collection with cell states
         let datasource = RxSectionedCollectionDataSource<StoreDifferentiableSection<CategoryGroupState>>(cellCreation: { (collectionView, indexPath, categoryStore) -> UICollectionViewCell in
@@ -114,8 +129,9 @@ class SectionedUneatenViewController: UIViewController {
             let viewStore = ViewStore(categoryStore.scope(state: { $0.view }))
             cell.configure(viewStore: viewStore)
             return cell
-        }, headerCreation: { (collectionView: UICollectionView, sectionIndex: Int, section: StoreDifferentiableSection<CategoryGroupState>) -> UICollectionReusableView? in
-            guard let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "SectionHeaderView", for: IndexPath(row: 0, section: sectionIndex)) as? SectionHeaderView else {
+        }, headerCreation: { [weak self] (collectionView: UICollectionView, sectionIndex: Int, section: StoreDifferentiableSection<CategoryGroupState>) -> UICollectionReusableView? in
+            guard self?.viewStore.headerIndices.contains(sectionIndex) ?? false,
+                let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "SectionHeaderView", for: IndexPath(row: 0, section: sectionIndex)) as? SectionHeaderView else {
                 return nil
             }
             let viewStore = ViewStore(section.store.scope(state: { $0.view }))
@@ -139,6 +155,16 @@ class SectionedUneatenViewController: UIViewController {
 //        })
 //        .disposed(by: disposeBag)
         
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            self.viewStore.send(.append(text: "bla bla bla"))
+        }
+        
+    }
+}
+
+extension SectionedUneatenViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        viewStore.headerIndices.contains(section) ? CGSize(width: 30, height: 40) : CGSize.zero
     }
 }
 
@@ -149,12 +175,13 @@ extension UneatenState {
         let validateButtonHidden = pendingValidation
         let activityIndicatorHidden = !pendingValidation
         
-        return .init(validateButtonTitle: validateButtonTitle, validateButtonEnabled: validateButtonEnabled, validateButtonHidden: validateButtonHidden, activityIndicatorHidden: activityIndicatorHidden)
+        return .init(validateButtonTitle: validateButtonTitle, validateButtonEnabled: validateButtonEnabled, validateButtonHidden: validateButtonHidden, activityIndicatorHidden: activityIndicatorHidden, headerIndices: groups.enumerated().filter { !$1.isStandalone }.map { index, _ in index })
     }
 }
 
 extension CategoryGroupState {
     var view: SectionHeaderView.ViewState {
+        
         .init(isSelected: false, name: "trololo")
     }
 }
