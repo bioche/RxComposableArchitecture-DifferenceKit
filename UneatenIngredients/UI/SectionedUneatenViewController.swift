@@ -116,7 +116,6 @@ class SectionedUneatenViewController: UIViewController {
         .disposed(by: disposeBag)
         
         categoriesCollectionView.register(UINib(nibName: "SectionHeaderView", bundle: .main), forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "SectionHeaderView")
-       // categoriesCollectionView.register(SectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "SectionHeaderView")
         
         self.categoriesCollectionView.delegate = self
         
@@ -155,10 +154,14 @@ class SectionedUneatenViewController: UIViewController {
 //        })
 //        .disposed(by: disposeBag)
         
+        
+        
         DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
             self.viewStore.send(.append(text: "bla bla bla"))
         }
-        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 6) {
+            self.viewStore.send(.append(text: "bla bla bla"))
+        }
     }
 }
 

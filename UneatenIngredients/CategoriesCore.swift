@@ -85,11 +85,11 @@ let uneatenReducer = Reducer<UneatenState, UneatenAction, UneatenEnvironment> { 
         state.saved = true
         state.pendingValidation = false
     case .append(let text):
-        var firstsubCategories = state.categoriesStates.first?.substates ?? []
+        var firstsubCategories = state.categoriesStates[safe: 2]?.substates ?? []
         firstsubCategories.indices.forEach {
             firstsubCategories[$0].name.append(contentsOf: text)
         }
-        state.categoriesStates[safe: 0]?.substates = firstsubCategories
+        state.categoriesStates[safe: 2]?.substates = firstsubCategories
     }
     return .none
 }

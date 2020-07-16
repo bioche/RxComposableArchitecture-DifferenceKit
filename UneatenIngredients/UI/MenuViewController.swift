@@ -46,8 +46,8 @@ class MenuViewController: UIViewController {
             .drive(onNext: { [weak self] in
                 
                 let standaloneCategories = [
-                    CategoryState(id: "fishKey", name: "Fish", isSelected: false, substates: []),
-                    CategoryState(id: "shellfishKey", name: "Shellfish", isSelected: false, substates: [])
+                    CategoryState(id: "fishKey", name: "Fish", isSelected: false, substates: [])
+                    ,CategoryState(id: "shellfishKey", name: "Shellfish", isSelected: false, substates: [])
                 ]
                 
                 let meatSubCategories = [
