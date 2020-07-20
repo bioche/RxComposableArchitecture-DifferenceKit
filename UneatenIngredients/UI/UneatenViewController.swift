@@ -69,7 +69,8 @@ class UneatenViewController: UIViewController {
                 assertionFailure()
                 return .init()
             }
-            let viewStore = ViewStore(categoryStore.scope(state: { $0.view }))
+            
+            let viewStore: ViewStore<UneatenCategoryCollectionViewCell.ViewState, UneatenCategoryCollectionViewCell.ViewAction> = .init(categoryStore.scope(state: { $0.view }, action: {_ in fatalError() }))
             cell.configure(viewStore: viewStore)
             return cell
         }

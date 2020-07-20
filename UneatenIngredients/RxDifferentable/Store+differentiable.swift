@@ -23,32 +23,32 @@ extension Store: Differentiable where State: Differentiable {
 }
 
 // created to
-struct StoreDifferentiableSection<State: DifferentiableSection>: DifferentiableSection
-    where State.Collection.Element: TCAIdentifiable {
+struct StoreDifferentiableSection<SectionState: DifferentiableSection, SectionAction, ElementAction>: DifferentiableSection
+    where SectionState.Collection.Element: TCAIdentifiable {
     
-    let store: Store<State, Never>
-    let elements: [Store<State.Collection.Element, Never>]
+    let store: Store<SectionState, SectionAction>
+    let elements: [Store<SectionState.Collection.Element, ElementAction>]
     
-    init<C: Swift.Collection>(source: StoreDifferentiableSection<State>, elements: C) where C.Element == Self.Collection.Element {
+    init<C: Swift.Collection>(source: Self, elements: C) where C.Element == Self.Collection.Element {
         self.store = source.store
         self.elements = Array(elements)
     }
     
-    init(store: Store<State, Never>) {
+    init(store: Store<SectionState, SectionAction>, actionScoping: @escaping (SectionState.Collection.Element.ID, ElementAction) -> SectionAction) {
         self.store = store
-        var elements = [Store<State.Collection.Element, Never>]()
+        var elements = [Store<SectionState.Collection.Element, ElementAction>]()
         store
-            .scope(state: { Array($0.elements) })
+            .scope(state: { Array($0.elements) }, action: actionScoping)
             .scopeForEach()
             .drive(onNext: { elements = $0 })
         self.elements = elements
     }
     
-    func isContentEqual(to source: StoreDifferentiableSection<State>) -> Bool {
+    func isContentEqual(to source: Self) -> Bool {
         store.isContentEqual(to: source.store)
     }
     
-    var differenceIdentifier: State.DifferenceIdentifier {
+    var differenceIdentifier: SectionState.DifferenceIdentifier {
         store.differenceIdentifier
     }
 }

@@ -66,7 +66,10 @@ extension CategoryState: Differentiable {
 /// The actions of the uneaten feature.
 enum UneatenAction {
     case validateSelection
+    
     case toggleCategory(index: Int)
+    case toggleSubcategory(id: String, parentId: String?)
+    case toggleSuperCategory(id: String)
     
     case acknowledgeValidation
     
@@ -81,6 +84,23 @@ let uneatenReducer = Reducer<UneatenState, UneatenAction, UneatenEnvironment> { 
     case .toggleCategory(let index):
         state.saved = false
         state.categoriesStates[index].isSelected.toggle()
+    case .toggleSuperCategory(let id), .toggleSubcategory(let id, parentId: nil):
+        print("toggling category of top level : \(id)")
+        guard let index = state.categoriesStates.firstIndex(where: { $0.id == id }) else {
+            assertionFailure("didn't find category with id: \(id)")
+            return .none
+        }
+        state.saved = false
+        state.categoriesStates[index].isSelected.toggle()
+    case .toggleSubcategory(let id, let parentId?):
+        print("toggling category of second level : \(id) in category : \(parentId)")
+        guard let index = state.categoriesStates.firstIndex(where: { $0.id == parentId }),
+            let subIndex = state.categoriesStates[index].substates.firstIndex(where: { $0.id == id }) else {
+                assertionFailure("didn't find category with id: \(id) in category with id \(parentId)")
+                return .none
+        }
+        state.saved = false
+        state.categoriesStates[index].substates[subIndex].isSelected.toggle()
     case .acknowledgeValidation:
         state.saved = true
         state.pendingValidation = false

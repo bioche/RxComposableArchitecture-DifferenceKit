@@ -27,10 +27,13 @@ enum CategoryGroupState: Equatable {
 }
 
 extension CategoryGroupState: TCAIdentifiable {
+    
+    static var standaloneGroupId: String { "standaloneGroup" }
+    
     var id: String {
         switch self {
         case .standaloneCategories:
-            return "standaloneSection"
+            return Self.standaloneGroupId
         case .topCategory(let topCategory):
             return topCategory.id
         }
@@ -97,9 +100,16 @@ class SectionedUneatenViewController: UIViewController {
     /// The actions emitted by the view. Should be as close as possible to the user actions. (just like PureAir Inputs). In this case (and probably often) it matches the feature action.
     fileprivate typealias ViewAction = UneatenAction
     
+    typealias ElementAction = UneatenCategoryCollectionViewCell.ViewAction
+    enum SectionAction {
+        case toggleSubcategoryWithId(String)
+        case toggleTopCategory
+    }
+    
     private var store: Store<UneatenState, UneatenAction>!
     private var viewStore: ViewStore<ViewState, ViewAction>!
     
+    @IBOutlet weak var increaseCategoriesNameButton: UIButton!
     @IBOutlet private weak var validateButton: UIButton!
     @IBOutlet private weak var categoriesCollectionView: UICollectionView!
     @IBOutlet private weak var activityIndicator: UIActivityIndicatorView!
@@ -141,7 +151,7 @@ class SectionedUneatenViewController: UIViewController {
         self.categoriesCollectionView.delegate = self
         
         // fill the collection with cell states
-        let datasource = RxSectionedCollectionDataSource<StoreDifferentiableSection<CategoryGroupState>>(cellCreation: { (collectionView, indexPath, categoryStore) -> UICollectionViewCell in
+        let datasource = RxSectionedCollectionDataSource<StoreDifferentiableSection<CategoryGroupState, SectionAction, ElementAction>>(cellCreation: { (collectionView, indexPath, categoryStore) -> UICollectionViewCell in
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "category", for: indexPath) as? UneatenCategoryCollectionViewCell else {
                 assertionFailure()
                 return .init()
@@ -149,24 +159,23 @@ class SectionedUneatenViewController: UIViewController {
             let viewStore = ViewStore(categoryStore.scope(state: { $0.view }))
             cell.configure(viewStore: viewStore)
             return cell
-        }, headerCreation: { [weak self] (collectionView: UICollectionView, sectionIndex: Int, section: StoreDifferentiableSection<CategoryGroupState>) -> UICollectionReusableView? in
+        }, headerCreation: { [weak self] (collectionView: UICollectionView, sectionIndex: Int, section: StoreDifferentiableSection<CategoryGroupState, SectionAction, ElementAction>) -> UICollectionReusableView? in
             guard self?.viewStore.headerIndices.contains(sectionIndex) ?? false,
                 let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "SectionHeaderView", for: IndexPath(row: 0, section: sectionIndex)) as? SectionHeaderView else {
                 return nil
             }
-            let viewStore = ViewStore(section.store.scope(state: { $0.view }))
+            let viewStore = ViewStore(section.store.scope(state: { $0.view }, action: { (_: SectionHeaderView.ViewAction) in .toggleTopCategory }))
             headerView.configure(viewStore: viewStore)
             return headerView
         })
-        
+
         // we bind the store to the table view cells using differenceKit.
         store
-            .actionless
-            .scope(state: { $0.groups }) // --> just simplify the store to a simple array of groups
+            .scope(state: { $0.groups }, action: UneatenAction.fromSection(sectionId:sectionAction:)) // --> just simplify the store to a simple array of groups
             //.scopeForEach(shouldAvoidReload: { $0.isContentEqual(to: $1) })
             .scopeForEach(shouldAvoidReload: { !$0.datasourceNeedsUpdate(for: $1) }) // --> Create one store for each group. Only reload when a difference that can't be handled by the stores themselves is detected.
             .debug("scopeForEach")
-            .map { $0.map { StoreDifferentiableSection(store: $0) } }
+            .map { $0.map { StoreDifferentiableSection(store: $0, actionScoping: { index, _ in SectionAction.toggleSubcategoryWithId(index) }) } }
             .drive(categoriesCollectionView.rx.items(dataSource: datasource)) // --> Bind to the datasource --> The stores will be set in the cells
             .disposed(by: disposeBag)
         
@@ -176,12 +185,10 @@ class SectionedUneatenViewController: UIViewController {
 //        })
 //        .disposed(by: disposeBag)
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-            self.viewStore.send(.append(text: "bla bla bla"))
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 6) {
-            self.viewStore.send(.append(text: "bla bla bla"))
-        }
+        increaseCategoriesNameButton.rx.tap.subscribe(onNext: { [weak self] in
+            self?.viewStore.send(.append(text: " bla bla"))
+        })
+        .disposed(by: disposeBag)
     }
 }
 
@@ -210,6 +217,22 @@ extension CategoryGroupState {
         case .topCategory(let topCategory):
             return .init(isSelected: topCategory.isSelected,
                          name: topCategory.name)
+        }
+    }
+}
+
+extension UneatenAction {
+    fileprivate static func fromSection(sectionId: String, sectionAction: SectionedUneatenViewController.SectionAction) -> Self {
+        switch sectionAction {
+        case .toggleTopCategory:
+            return .toggleSuperCategory(id: sectionId)
+        case .toggleSubcategoryWithId(let id):
+            if sectionId == CategoryGroupState.standaloneGroupId {
+                return .toggleSubcategory(id: id, parentId: nil)
+            } else {
+                return .toggleSubcategory(id: id, parentId: sectionId)
+            }
+            
         }
     }
 }

@@ -29,10 +29,10 @@ class SectionHeaderView: UICollectionReusableView {
     @IBOutlet private weak var nameLabel: UILabel!
     @IBOutlet private weak var selectionSwitch: UISwitch!
     
-    private var viewStore: ViewStore<ViewState, Never>!
-    private let disposeBag = DisposeBag()
+    private var viewStore: ViewStore<ViewState, ViewAction>!
+    private var disposeBag = DisposeBag()
     
-    func configure(viewStore: ViewStore<ViewState, Never>) {
+    func configure(viewStore: ViewStore<ViewState, ViewAction>) {
         self.viewStore = viewStore
         
         viewStore.driver.isSelected
@@ -47,5 +47,11 @@ class SectionHeaderView: UICollectionReusableView {
 //            .disposed(by: disposeBag)
         
         nameLabel.text = viewStore.name
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        disposeBag = DisposeBag()
     }
 }
