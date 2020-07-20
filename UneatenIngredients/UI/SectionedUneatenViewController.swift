@@ -49,8 +49,16 @@ extension CategoryGroupState: DifferentiableSection {
     }
     
     func isContentEqual(to source: Self) -> Bool {
-        elements.count == source.elements.count &&
-            zip(elements, source.elements).allSatisfy { $0.isContentEqual(to: $1) }
+//        elements.count == source.elements.count &&
+//        zip(elements, source.elements).allSatisfy { $0.isContentEqual(to: $1) }
+        switch (self, source) {
+        case (.standaloneCategories, .standaloneCategories):
+            return true
+        case let (.topCategory(topCategory), .topCategory(sourceTopCategory)):
+            return topCategory.isContentEqual(to: sourceTopCategory)
+        default:
+            return false
+        }
     }
     
     var elements: [CategoryState] {
@@ -60,6 +68,19 @@ extension CategoryGroupState: DifferentiableSection {
         case .topCategory(let topCategory):
             return topCategory.substates
         }
+    }
+    
+    /// When the content of the header itself changes
+    /// or elements below have a change that calls for update of cells, we return true.
+    /// Then the stores will be given to differenceKit so that it updates the cells / header that need to.
+    func datasourceNeedsUpdate(for new: Self) -> Bool {
+        !isContentEqual(to: new)
+            || elements.count != new.elements.count
+            || !zip(elements, new.elements)
+                .allSatisfy {
+                    $0.isContentEqual(to: $1)
+                    && $0.differenceIdentifier == $1.differenceIdentifier
+                }
     }
 }
 
@@ -142,7 +163,8 @@ class SectionedUneatenViewController: UIViewController {
         store
             .actionless
             .scope(state: { $0.groups }) // --> just simplify the store to a simple array of groups
-            .scopeForEach(shouldAvoidReload: { $0.isContentEqual(to: $1) }) // --> Create one store for each category
+            //.scopeForEach(shouldAvoidReload: { $0.isContentEqual(to: $1) })
+            .scopeForEach(shouldAvoidReload: { !$0.datasourceNeedsUpdate(for: $1) }) // --> Create one store for each group. Only reload when a difference that can't be handled by the stores themselves is detected.
             .debug("scopeForEach")
             .map { $0.map { StoreDifferentiableSection(store: $0) } }
             .drive(categoriesCollectionView.rx.items(dataSource: datasource)) // --> Bind to the datasource --> The stores will be set in the cells
@@ -153,8 +175,6 @@ class SectionedUneatenViewController: UIViewController {
 //            self?.viewStore.send(.toggleCategory(index: indexpath.row))
 //        })
 //        .disposed(by: disposeBag)
-        
-        
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
             self.viewStore.send(.append(text: "bla bla bla"))
@@ -184,7 +204,12 @@ extension UneatenState {
 
 extension CategoryGroupState {
     var view: SectionHeaderView.ViewState {
-        
-        .init(isSelected: false, name: "trololo")
+        switch self {
+        case .standaloneCategories:
+            return .empty
+        case .topCategory(let topCategory):
+            return .init(isSelected: topCategory.isSelected,
+                         name: topCategory.name)
+        }
     }
 }

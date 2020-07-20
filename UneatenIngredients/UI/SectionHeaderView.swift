@@ -15,6 +15,10 @@ class SectionHeaderView: UICollectionReusableView {
     struct ViewState: Equatable {
         var isSelected: Bool
         var name: String
+        
+        static var empty: Self {
+            .init(isSelected: false, name: "")
+        }
     }
     
     enum ViewAction {

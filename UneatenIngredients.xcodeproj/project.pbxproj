@@ -27,6 +27,8 @@
 		4157C37224BE62D000941098 /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = 4157C37124BE62D000941098 /* ComposableArchitecture */; };
 		41EA4B3A24BF2EBE0060D591 /* SectionHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 41EA4B3824BF2EBE0060D591 /* SectionHeaderView.xib */; };
 		41EA4B3B24BF2EBE0060D591 /* SectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41EA4B3924BF2EBE0060D591 /* SectionHeaderView.swift */; };
+		41EA4B4124C1EB390060D591 /* IBPCollectionViewCompositionalLayout in Frameworks */ = {isa = PBXBuildFile; productRef = 41EA4B4024C1EB390060D591 /* IBPCollectionViewCompositionalLayout */; };
+		41EA4B4324C1EC890060D591 /* IBPCollectionViewCompositionalLayoutInteroperability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41EA4B4224C1EC890060D591 /* IBPCollectionViewCompositionalLayoutInteroperability.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -51,6 +53,7 @@
 		4157C36F24BE605B00941098 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		41EA4B3824BF2EBE0060D591 /* SectionHeaderView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SectionHeaderView.xib; sourceTree = "<group>"; };
 		41EA4B3924BF2EBE0060D591 /* SectionHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SectionHeaderView.swift; sourceTree = "<group>"; };
+		41EA4B4224C1EC890060D591 /* IBPCollectionViewCompositionalLayoutInteroperability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IBPCollectionViewCompositionalLayoutInteroperability.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +62,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4157C37224BE62D000941098 /* ComposableArchitecture in Frameworks */,
+				41EA4B4124C1EB390060D591 /* IBPCollectionViewCompositionalLayout in Frameworks */,
 				4157C35324BB1F8D00941098 /* DifferenceKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -86,6 +90,7 @@
 		4112206924B4A9270007FA30 /* UneatenIngredients */ = {
 			isa = PBXGroup;
 			children = (
+				41EA4B4224C1EC890060D591 /* IBPCollectionViewCompositionalLayoutInteroperability.swift */,
 				4157C36C24BE5FB600941098 /* RxDifferentable */,
 				4157C35C24BB217D00941098 /* UI */,
 				4112206A24B4A9270007FA30 /* AppDelegate.swift */,
@@ -144,6 +149,7 @@
 			packageProductDependencies = (
 				4157C35224BB1F8D00941098 /* DifferenceKit */,
 				4157C37124BE62D000941098 /* ComposableArchitecture */,
+				41EA4B4024C1EB390060D591 /* IBPCollectionViewCompositionalLayout */,
 			);
 			productName = UneatenIngredients;
 			productReference = 4112206724B4A9270007FA30 /* UneatenIngredients.app */;
@@ -176,6 +182,7 @@
 			packageReferences = (
 				4157C35124BB1F8D00941098 /* XCRemoteSwiftPackageReference "DifferenceKit" */,
 				4157C37024BE62D000941098 /* XCRemoteSwiftPackageReference "RxSwiftComposableArchitecture" */,
+				41EA4B3F24C1EB390060D591 /* XCRemoteSwiftPackageReference "IBPCollectionViewCompositionalLayout" */,
 			);
 			productRefGroup = 4112206824B4A9270007FA30 /* Products */;
 			projectDirPath = "";
@@ -207,6 +214,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				41EA4B4324C1EC890060D591 /* IBPCollectionViewCompositionalLayoutInteroperability.swift in Sources */,
 				4157C35524BB202700941098 /* UneatenCategoriesService.swift in Sources */,
 				4157C35E24BB226900941098 /* RxSectionedDataSource.swift in Sources */,
 				4157C35B24BB214000941098 /* CategoriesCore.swift in Sources */,
@@ -426,6 +434,14 @@
 				kind = branch;
 			};
 		};
+		41EA4B3F24C1EB390060D591 /* XCRemoteSwiftPackageReference "IBPCollectionViewCompositionalLayout" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kishikawakatsumi/IBPCollectionViewCompositionalLayout";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.6.7;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -438,6 +454,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 4157C37024BE62D000941098 /* XCRemoteSwiftPackageReference "RxSwiftComposableArchitecture" */;
 			productName = ComposableArchitecture;
+		};
+		41EA4B4024C1EB390060D591 /* IBPCollectionViewCompositionalLayout */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 41EA4B3F24C1EB390060D591 /* XCRemoteSwiftPackageReference "IBPCollectionViewCompositionalLayout" */;
+			productName = IBPCollectionViewCompositionalLayout;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

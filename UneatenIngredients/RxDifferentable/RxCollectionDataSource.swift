@@ -80,9 +80,14 @@ class RxSectionedCollectionDataSource<Section: DifferentiableSection>: NSObject,
         
         print("changeset : \(changeset)")
         
+      //  UIView.animate(withDuration: 4, animations: {
         collectionView.reload(using: changeset) { data in
             self.values = data
         }
+     //   })
+
+        // this hack avoids weird header placement when reloading cells (the header seems to be floating above the cells ... spooky stuff)
+        collectionView.performBatchUpdates({ })
     }
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
