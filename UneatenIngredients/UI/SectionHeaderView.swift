@@ -22,7 +22,7 @@ class SectionHeaderView: UICollectionReusableView {
     }
     
     enum ViewAction {
-        case toggleCategory
+        case toggleSwitch
     }
     
     @IBOutlet private weak var pictoImageView: UIImageView!
@@ -38,13 +38,14 @@ class SectionHeaderView: UICollectionReusableView {
         viewStore.driver.isSelected
             .drive(selectionSwitch.rx.isOn)
             .disposed(by: disposeBag)
-//        selectionSwitch.rx.isOn
-//            .distinctUntilChanged()
-//            .subscribe(onNext: { _ in
-//                print("toggling category !!")
-//                viewStore.send(.toggleCategory)
-//            })
-//            .disposed(by: disposeBag)
+        selectionSwitch.rx.isOn
+            .distinctUntilChanged()
+            .skip(1) // isOn is always triggered on launch
+            .subscribe(onNext: { _ in
+                print("toggling category !!")
+                viewStore.send(.toggleSwitch)
+            })
+            .disposed(by: disposeBag)
         
         nameLabel.text = viewStore.name
     }

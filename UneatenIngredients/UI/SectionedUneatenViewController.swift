@@ -69,6 +69,9 @@ extension CategoryGroupState: DifferentiableSection {
         case .standaloneCategories(let categories):
             return categories
         case .topCategory(let topCategory):
+            if topCategory.isSelected {
+                return []
+            }
             return topCategory.substates
         }
     }

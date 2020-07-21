@@ -37,7 +37,7 @@ class UneatenCategoryCollectionViewCell: UICollectionViewCell {
 //            self?.titleLabel.text = $0
 //        }).disposed(by: disposeBag)
         viewStore.driver.tint.drive(onNext: { [weak self] in
-            print("tinting this shit : \(self). Tint : \($0)")
+            print("tinting this shit : \(self?.viewStore.title). Tint : \($0)")
             self?.imageView.tintColor = $0.uiColor
             self?.titleLabel.textColor = $0.uiColor
         }).disposed(by: disposeBag)
