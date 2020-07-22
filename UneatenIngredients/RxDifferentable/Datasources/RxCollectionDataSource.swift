@@ -21,36 +21,6 @@ extension ContentIdentifiable where Self: TCAIdentifiable {
 
 extension String: Differentiable { }
 
-class RxFlatCollectionDataSource<Element: Differentiable>: NSObject, RxCollectionViewDataSourceType, UICollectionViewDataSource {
-    
-    private typealias OnlySection<Element: Differentiable> = ArraySection<String, Element>
-    
-    private let sectionedDatasource: RxSectionedCollectionDataSource<OnlySection<Element>>
-    
-    init(cellCreation: @escaping (UICollectionView, IndexPath, Element) -> UICollectionViewCell) {
-        sectionedDatasource = .init(cellCreation: cellCreation)
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, observedEvent: Event<[Element]>) {
-        sectionedDatasource
-            .collectionView(collectionView,
-                            observedEvent: observedEvent
-                                .map { [OnlySection(model: "only section", elements: $0)] })
-    }
-    
-    func numberOfSections(in collectionView: UICollectionView) -> Int {
-        sectionedDatasource.numberOfSections(in: collectionView)
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        sectionedDatasource.collectionView(collectionView, numberOfItemsInSection: section)
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        sectionedDatasource.collectionView(collectionView, cellForItemAt: indexPath)
-    }
-}
-
 class RxSectionedCollectionDataSource<Section: DifferentiableSection>: NSObject, RxCollectionViewDataSourceType, UICollectionViewDataSource, SectionedViewDataSourceType where Section.Collection.Index == Int {
     
     typealias Element = [Section]
@@ -59,8 +29,6 @@ class RxSectionedCollectionDataSource<Section: DifferentiableSection>: NSObject,
     let cellCreation: (UICollectionView, IndexPath, CellModel) -> UICollectionViewCell
     let headerCreation: ((UICollectionView, Int, Section) -> UICollectionReusableView?)?
     var values: Element = []
-    
-    private let disposeBag = DisposeBag()
     
     /// Init method
     /// - Parameters:
@@ -87,8 +55,6 @@ class RxSectionedCollectionDataSource<Section: DifferentiableSection>: NSObject,
             // this hack avoids weird header placement when reloading cells (the header seems to be floating above the cells ... spooky stuff)
             collectionView.performBatchUpdates({ })
         })
-
-
     }
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {

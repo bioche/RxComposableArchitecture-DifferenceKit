@@ -175,7 +175,6 @@ class SectionedUneatenViewController: UIViewController {
         // we bind the store to the table view cells using differenceKit.
         store
             .scope(state: { $0.groups }, action: UneatenAction.fromSection(sectionId:sectionAction:)) // --> just simplify the store to a simple array of groups
-            //.scopeForEach(shouldAvoidReload: { $0.isContentEqual(to: $1) })
             .scopeForEach(shouldAvoidReload: { !$0.datasourceNeedsUpdate(for: $1) }) // --> Create one store for each group. Only reload when a difference that can't be handled by the stores themselves is detected.
             .debug("scopeForEach")
             .map { $0.map { StoreDifferentiableSection(store: $0, actionScoping: { index, _ in SectionAction.toggleSubcategoryWithId(index) }) } }
@@ -189,7 +188,7 @@ class SectionedUneatenViewController: UIViewController {
 //        .disposed(by: disposeBag)
         
         increaseCategoriesNameButton.rx.tap.subscribe(onNext: { [weak self] in
-            self?.viewStore.send(.append(text: " bla bla"))
+            self?.viewStore.send(.append(text: " bla bla", keys: ["beefKey", "turkeyKey"]))
         })
         .disposed(by: disposeBag)
     }

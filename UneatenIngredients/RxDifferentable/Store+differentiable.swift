@@ -22,6 +22,12 @@ extension Store: Differentiable where State: Differentiable {
     }
 }
 
+extension Store: TCAIdentifiable where State: TCAIdentifiable {
+    public var id: State.ID {
+        ViewStore(self, removeDuplicates: {_, _ in false }).id
+    }
+}
+
 // created to
 struct StoreDifferentiableSection<SectionState: DifferentiableSection, SectionAction, ElementAction>: DifferentiableSection
     where SectionState.Collection.Element: TCAIdentifiable {

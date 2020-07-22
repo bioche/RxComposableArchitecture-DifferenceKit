@@ -73,7 +73,7 @@ enum UneatenAction {
     
     case acknowledgeValidation
     
-    case append(text: String)
+    case append(text: String, keys: [String])
 }
 
 let uneatenReducer = Reducer<UneatenState, UneatenAction, UneatenEnvironment> { state, action, environment in
@@ -104,12 +104,17 @@ let uneatenReducer = Reducer<UneatenState, UneatenAction, UneatenEnvironment> { 
     case .acknowledgeValidation:
         state.saved = true
         state.pendingValidation = false
-    case .append(let text):
-        var firstsubCategories = state.categoriesStates[safe: 2]?.substates ?? []
-        firstsubCategories.indices.forEach {
-            firstsubCategories[$0].name.append(contentsOf: text)
+    case .append(let text, let keys):
+        state.categoriesStates.enumerated().forEach { topIndex, topCategory in
+            if keys.contains(topCategory.id) {
+                state.categoriesStates[topIndex].name.append(contentsOf: text)
+            }
+            topCategory.substates.enumerated().forEach {
+                if keys.contains($1.id) {
+                    state.categoriesStates[topIndex].substates[$0].name.append(contentsOf: text)
+                }
+            }
         }
-        state.categoriesStates[safe: 2]?.substates = firstsubCategories
     }
     return .none
 }

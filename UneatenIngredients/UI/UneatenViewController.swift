@@ -63,36 +63,33 @@ class UneatenViewController: UIViewController {
         })
         .disposed(by: disposeBag)
         
-        // fill the collection with cell states
-        let datasource = RxFlatCollectionDataSource<Store<CategoryState, Never>> { (collectionView, indexPath, categoryStore) -> UICollectionViewCell in
-            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "category", for: indexPath) as? UneatenCategoryCollectionViewCell else {
-                assertionFailure()
-                return .init()
-            }
-            
-            let viewStore: ViewStore<UneatenCategoryCollectionViewCell.ViewState, UneatenCategoryCollectionViewCell.ViewAction> = .init(categoryStore.scope(state: { $0.view }, action: {_ in fatalError() }))
-            cell.configure(viewStore: viewStore)
-            return cell
-        }
-    
         // we bind the store to the table view cells using differenceKit.
-        store.actionless // remove the action --> No action on cell
+        store // remove the action --> No action on cell
             .scope(state: { $0.categoriesStates }) // --> just simplify the store to a simple array of categories
-            .scopeForEach(shouldAvoidReload: { $0.isContentEqual(to: $1) }) // --> Create one store for each category
-            .debug("scopeForEach")
-            .drive(categoriesCollectionView.rx.items(dataSource: datasource)) // --> Bind to the datasource --> The stores will be set in the cells
+            .bindTo(collectionView: categoriesCollectionView,
+                    reloadCondition: { !$0.isContentEqual(to: $1) })
+                { (collectionView, indexPath, categoryStore) -> UICollectionViewCell in
+                    guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "category", for: indexPath) as? UneatenCategoryCollectionViewCell else {
+                        assertionFailure()
+                        return .init()
+                    }
+                    
+                    let viewStore: ViewStore<UneatenCategoryCollectionViewCell.ViewState, UneatenCategoryCollectionViewCell.ViewAction> = .init(categoryStore.scope(state: { $0.view }, action: { _ in UneatenAction.toggleCategory(index: indexPath.row) }))
+                    cell.configure(viewStore: viewStore)
+                    return cell
+                }
             .disposed(by: disposeBag)
         
         // listen to the tapped index
-        categoriesCollectionView.rx.itemSelected.subscribe(onNext: { [weak self] indexpath in
-            self?.viewStore.send(.toggleCategory(index: indexpath.row))
-        })
-        .disposed(by: disposeBag)
+//        categoriesCollectionView.rx.itemSelected.subscribe(onNext: { [weak self] indexpath in
+//            self?.viewStore.send(.toggleCategory(index: indexpath.row))
+//        })
+//        .disposed(by: disposeBag)
         
         // Just a dummy test of the cell size increase
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            self.viewStore.send(.append(text: "bla bla bla"))
-        }
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
+//            self.viewStore.send(.append(text: " bla bla bla", keys: ["chickenKey"]))
+//        }
     }
 }
 

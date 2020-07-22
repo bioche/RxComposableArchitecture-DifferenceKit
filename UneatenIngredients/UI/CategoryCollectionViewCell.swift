@@ -31,6 +31,8 @@ class UneatenCategoryCollectionViewCell: UICollectionViewCell {
     func configure(viewStore: ViewStore<ViewState, ViewAction>) {
         self.viewStore = viewStore
         
+        print("configuring cell \(viewStore.title)")
+        
         imageView.image = UIImage(named: viewStore.imageName)
         titleLabel.text = viewStore.title
 //        viewStore.driver.title.drive(onNext: { [weak self] in

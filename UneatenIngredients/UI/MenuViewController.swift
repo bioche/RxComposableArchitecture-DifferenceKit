@@ -35,7 +35,7 @@ class MenuViewController: UIViewController {
         
         uneatenButton.rx.tap.asDriver()
             .drive(onNext: { [weak self] in
-                let initialState = UneatenState(categoriesStates: [CategoryState(id: "chickenKey", name: "chicken", isSelected: false, substates: []), CategoryState(id: "SaladKey", name: "salad", isSelected: false, substates: [])], saved: true, pendingValidation: false)
+                let initialState = UneatenState(categoriesStates: [CategoryState(id: "chickenKey", name: "chicken", isSelected: false, substates: []), CategoryState(id: "saladKey", name: "salad", isSelected: false, substates: [])], saved: true, pendingValidation: false)
                 let store = ComposableArchitecture.Store<UneatenState, UneatenAction>(initialState: initialState, reducer: uneatenReducer, environment: UneatenEnvironment(uneatenService: UneatenCategoriesMockService()))
                 let uneatenController = UneatenViewController.create(store: store)
                 self?.navigationController?.pushViewController(uneatenController, animated: true)
