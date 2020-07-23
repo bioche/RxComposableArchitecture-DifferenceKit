@@ -4,3 +4,10 @@
 - On top of collection :
 -- View controller to add category with timer to see animation
 
+- Add configuration to datasource (config struct) : configure the application of changesets
+
+Notes :
+reloading items in section :
+Done naively, the sections headers don't animate as they should. Possible solutions :
+- reload of full section when a cell is reloaded (not chosen because not right on paper and may lose scrolling on some layout)
+- perform empty batch update right after the first one : cheap trick.

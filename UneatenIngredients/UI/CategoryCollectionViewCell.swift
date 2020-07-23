@@ -20,6 +20,7 @@ class UneatenCategoryCollectionViewCell: UICollectionViewCell {
         case toggleCategory
     }
     
+    @IBOutlet weak var cheapSwitch: UISwitch!
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var selectionButton: UIButton!
@@ -29,6 +30,9 @@ class UneatenCategoryCollectionViewCell: UICollectionViewCell {
     var viewStore: ViewStore<ViewState, ViewAction>!
     
     func configure(viewStore: ViewStore<ViewState, ViewAction>) {
+        
+        cheapSwitch.isOn = true
+        
         self.viewStore = viewStore
         
         print("configuring cell \(viewStore.title)")

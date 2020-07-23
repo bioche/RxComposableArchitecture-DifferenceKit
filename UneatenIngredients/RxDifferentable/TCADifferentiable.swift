@@ -75,9 +75,10 @@ extension Store {
             .debug("scopeForEach")
             .map { $0.map { store in
                 var elements = [Store<ItemState, ItemAction>]()
-                store.scope(state: { itemsBuilder.items($0) }, action: itemsBuilder.actionScoping)
+                let disposable = store.scope(state: { itemsBuilder.items($0) }, action: itemsBuilder.actionScoping)
                     .scopeForEach()
                     .drive(onNext: { elements = $0 })
+                disposable.dispose()
                 return StoreDifferentiableSection(store: store, itemStores: elements, headerReloadCondition: headerBuilder.headerReloadCondition, itemReloadCondition: itemsBuilder.itemsReloadCondition)
                 }
             }
