@@ -12,8 +12,7 @@ import RxCocoa
 import DifferenceKit
 import ComposableArchitecture
 
-extension ContentIdentifiable where Self: TCAIdentifiable {
-    @inlinable
+public extension ContentIdentifiable where Self: TCAIdentifiable {
     var differenceIdentifier: ID {
         id
     }

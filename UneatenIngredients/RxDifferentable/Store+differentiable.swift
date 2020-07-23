@@ -29,53 +29,29 @@ extension Store: TCAIdentifiable where State: TCAIdentifiable {
 }
 
 // created to
-struct StoreDifferentiableSection<SectionState: DifferentiableSection, SectionAction, ElementAction>: DifferentiableSection
-    where SectionState.Collection.Element: TCAIdentifiable {
-    
+struct StoreDifferentiableSection<SectionState: TCAIdentifiable, SectionAction, ItemState: TCAIdentifiable, ItemAction>: DifferentiableSection {
+
     let store: Store<SectionState, SectionAction>
-    let elements: [Store<SectionState.Collection.Element, ElementAction>]
-    
+    let elements: [AnyStoreDifferentiable<ItemState, ItemAction>]
+
+    let headerReloadCondition: (SectionState, SectionState) -> Bool
+
     init<C: Swift.Collection>(source: Self, elements: C) where C.Element == Self.Collection.Element {
         self.store = source.store
         self.elements = Array(elements)
+        self.headerReloadCondition = source.headerReloadCondition
     }
-    
-    init(store: Store<SectionState, SectionAction>, actionScoping: @escaping (SectionState.Collection.Element.ID, ElementAction) -> SectionAction) {
+
+    init(store: Store<SectionState, SectionAction>, itemStores: [Store<ItemState, ItemAction>], headerReloadCondition: @escaping (SectionState, SectionState) -> Bool, itemReloadCondition: @escaping (ItemState, ItemState) -> Bool) {
         self.store = store
-        var elements = [Store<SectionState.Collection.Element, ElementAction>]()
-        store
-            .scope(state: { Array($0.elements) }, action: actionScoping)
-            .scopeForEach()
-            .drive(onNext: { elements = $0 })
-        self.elements = elements
+        self.elements = itemStores
+            .map { AnyStoreDifferentiable(store: $0, contentEquality: { !itemReloadCondition($0, $1) } ) }
+        self.headerReloadCondition = headerReloadCondition
     }
-    
+
     func isContentEqual(to source: Self) -> Bool {
-        store.isContentEqual(to: source.store)
+        !Store.reloadCondition(headerReloadCondition)(self.store, source.store)
     }
-    
-    var differenceIdentifier: SectionState.DifferenceIdentifier {
-        store.differenceIdentifier
-    }
+
+    var differenceIdentifier: SectionState.ID { store.id }
 }
-
-//extension Store: DifferentiableSection where State: DifferentiableSection,  State.Collection.Element: TCAIdentifiable, Action == Never {
-//    public convenience init<C: Collection>(source: Store<State, Action>, elements: C) where C.Element == Store.Collection.Element {
-//        fatalError("shouldn't be necessary")
-//    }
-//
-//    public var elements: [Store<State.Collection.Element, Never>] {
-//        //TODO : Deal with Action
-//        // we keep
-//        var result = [Store<State.Collection.Element, Never>]()
-//        self.scope(state: { Array($0.elements) })
-//            .scopeForEach()
-//            .drive(onNext: { result = $0 })
-//        return result
-//    }
-//}
-
-
-// Store<[Group]> --> Driver<[Store<Group>]>
-// Section : Store<Group>
-// Element : Store<Category>

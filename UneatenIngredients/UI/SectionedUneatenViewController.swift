@@ -153,33 +153,37 @@ class SectionedUneatenViewController: UIViewController {
         
         self.categoriesCollectionView.delegate = self
         
-        // fill the collection with cell states
-        let datasource = RxSectionedCollectionDataSource<StoreDifferentiableSection<CategoryGroupState, SectionAction, ElementAction>>(cellCreation: { (collectionView, indexPath, categoryStore) -> UICollectionViewCell in
-            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "category", for: indexPath) as? UneatenCategoryCollectionViewCell else {
-                assertionFailure()
-                return .init()
+        let itemsBuilder = SectionItemsBuilder<CategoryGroupState, SectionAction, CategoryState, ElementAction>
+            .init(items: { $0.elements },
+                  itemsReloadCondition: { $0.name != $1.name },
+                  actionScoping: { id, _ in SectionAction.toggleSubcategoryWithId(id) },
+                  cellCreation: { (collectionView, indexPath, categoryStore) in
+                    guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "category", for: indexPath) as? UneatenCategoryCollectionViewCell else {
+                        assertionFailure()
+                        return .init()
+                    }
+                    let viewStore = ViewStore(categoryStore.scope(state: { $0.view }))
+                    cell.configure(viewStore: viewStore)
+                    return cell
+            })
+        
+        let headerBuilder = SectionHeaderBuilder<CategoryGroupState, SectionAction>
+            .init(headerReloadCondition: { _, _ in false })
+            { [weak self] (collectionView, sectionIndex, sectionStore) -> UICollectionReusableView? in
+                guard self?.viewStore.headerIndices.contains(sectionIndex) ?? false,
+                    let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "SectionHeaderView", for: IndexPath(row: 0, section: sectionIndex)) as? SectionHeaderView else {
+                        return nil
+                }
+                let viewStore = ViewStore(sectionStore.scope(state: { $0.view }, action: { (_: SectionHeaderView.ViewAction) in .toggleTopCategory }))
+                headerView.configure(viewStore: viewStore)
+                return headerView
             }
-            let viewStore = ViewStore(categoryStore.scope(state: { $0.view }))
-            cell.configure(viewStore: viewStore)
-            return cell
-        }, headerCreation: { [weak self] (collectionView: UICollectionView, sectionIndex: Int, section: StoreDifferentiableSection<CategoryGroupState, SectionAction, ElementAction>) -> UICollectionReusableView? in
-            guard self?.viewStore.headerIndices.contains(sectionIndex) ?? false,
-                let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "SectionHeaderView", for: IndexPath(row: 0, section: sectionIndex)) as? SectionHeaderView else {
-                return nil
-            }
-            let viewStore = ViewStore(section.store.scope(state: { $0.view }, action: { (_: SectionHeaderView.ViewAction) in .toggleTopCategory }))
-            headerView.configure(viewStore: viewStore)
-            return headerView
-        })
 
-        // we bind the store to the table view cells using differenceKit.
-        store
-            .scope(state: { $0.groups }, action: UneatenAction.fromSection(sectionId:sectionAction:)) // --> just simplify the store to a simple array of groups
-            .scopeForEach(shouldAvoidReload: { !$0.datasourceNeedsUpdate(for: $1) }) // --> Create one store for each group. Only reload when a difference that can't be handled by the stores themselves is detected.
-            .debug("scopeForEach")
-            .map { $0.map { StoreDifferentiableSection(store: $0, actionScoping: { index, _ in SectionAction.toggleSubcategoryWithId(index) }) } }
-            .drive(categoriesCollectionView.rx.items(dataSource: datasource)) // --> Bind to the datasource --> The stores will be set in the cells
-            .disposed(by: disposeBag)
+       store
+        .scope(state: { $0.groups }, action: UneatenAction.fromSection(sectionId:sectionAction:))
+        .bindTo(collectionView: categoriesCollectionView, itemsBuilder: itemsBuilder, headerBuilder: headerBuilder)
+        .disposed(by: disposeBag)
+
         
         // listen to the tapped index
 //        categoriesCollectionView.rx.itemSelected.subscribe(onNext: { [weak self] indexpath in

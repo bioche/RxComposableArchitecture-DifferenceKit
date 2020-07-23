@@ -28,6 +28,7 @@
 		4157C36024BB3BE000941098 /* RxCollectionDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4157C35F24BB3BE000941098 /* RxCollectionDataSource.swift */; };
 		4157C36E24BE5FEC00941098 /* Store+differentiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4157C36D24BE5FEC00941098 /* Store+differentiable.swift */; };
 		4157C37224BE62D000941098 /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = 4157C37124BE62D000941098 /* ComposableArchitecture */; };
+		4164E8DE24C9FB320038D8E8 /* Unused.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4164E8DD24C9FB320038D8E8 /* Unused.swift */; };
 		41EA4B3A24BF2EBE0060D591 /* SectionHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 41EA4B3824BF2EBE0060D591 /* SectionHeaderView.xib */; };
 		41EA4B3B24BF2EBE0060D591 /* SectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41EA4B3924BF2EBE0060D591 /* SectionHeaderView.swift */; };
 		41EA4B4124C1EB390060D591 /* IBPCollectionViewCompositionalLayout in Frameworks */ = {isa = PBXBuildFile; productRef = 41EA4B4024C1EB390060D591 /* IBPCollectionViewCompositionalLayout */; };
@@ -57,6 +58,7 @@
 		4157C35F24BB3BE000941098 /* RxCollectionDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RxCollectionDataSource.swift; sourceTree = "<group>"; };
 		4157C36D24BE5FEC00941098 /* Store+differentiable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Store+differentiable.swift"; sourceTree = "<group>"; };
 		4157C36F24BE605B00941098 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		4164E8DD24C9FB320038D8E8 /* Unused.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Unused.swift; sourceTree = "<group>"; };
 		41EA4B3824BF2EBE0060D591 /* SectionHeaderView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SectionHeaderView.xib; sourceTree = "<group>"; };
 		41EA4B3924BF2EBE0060D591 /* SectionHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SectionHeaderView.swift; sourceTree = "<group>"; };
 		41EA4B4224C1EC890060D591 /* IBPCollectionViewCompositionalLayoutInteroperability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IBPCollectionViewCompositionalLayoutInteroperability.swift; sourceTree = "<group>"; };
@@ -143,6 +145,7 @@
 				413C452B24C850D300B3A2D2 /* Datasources */,
 				4157C36D24BE5FEC00941098 /* Store+differentiable.swift */,
 				413C452724C75E0200B3A2D2 /* TCADifferentiable.swift */,
+				4164E8DD24C9FB320038D8E8 /* Unused.swift */,
 			);
 			path = RxDifferentable;
 			sourceTree = "<group>";
@@ -243,6 +246,7 @@
 				4157C36024BB3BE000941098 /* RxCollectionDataSource.swift in Sources */,
 				414E7AEB24BF03C9002E3165 /* SectionedUneatenViewController.swift in Sources */,
 				41EA4B3B24BF2EBE0060D591 /* SectionHeaderView.swift in Sources */,
+				4164E8DE24C9FB320038D8E8 /* Unused.swift in Sources */,
 				4157C35724BB206200941098 /* Color.swift in Sources */,
 				4157C36E24BE5FEC00941098 /* Store+differentiable.swift in Sources */,
 				4157C35924BB20BA00941098 /* CategoryCollectionViewCell.swift in Sources */,
