@@ -25,7 +25,7 @@ class RxSectionedCollectionDataSource<SectionModel, Item>: NSObject, RxCollectio
     typealias Section = TCASection<SectionModel, Item>
     typealias Element = [Section]
     typealias CellModel = Item
-    typealias ReloadingClosure = (UICollectionView, inout [Section], Event<[Section]>) -> ()
+    typealias ReloadingClosure = (UICollectionView, RxSectionedCollectionDataSource, Event<[Section]>) -> ()
     
     let cellCreation: (UICollectionView, IndexPath, Item) -> UICollectionViewCell
     let headerCreation: ((UICollectionView, Int, SectionModel) -> UICollectionReusableView?)?
@@ -47,7 +47,7 @@ class RxSectionedCollectionDataSource<SectionModel, Item>: NSObject, RxCollectio
     }
     
     func collectionView(_ collectionView: UICollectionView, observedEvent: Event<[Section]>) {
-        reloading(collectionView, &values, observedEvent)
+        reloading(collectionView, self, observedEvent)
     }
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -81,31 +81,33 @@ class RxSectionedCollectionDataSource<SectionModel, Item>: NSObject, RxCollectio
         cellModel(at: indexPath)
     }
     
-    static var fullReloading: (UICollectionView, inout [Section], Event<[Section]>) -> () {
-        return { collectionView, values, observedEvent in
-            values = observedEvent.element ?? []
+    static var fullReloading: ReloadingClosure {
+        return { collectionView, datasource, observedEvent in
+            datasource.values = observedEvent.element ?? []
             collectionView.reloadData()
-            DispatchQueue.main.async { // avoid weird layout of cells 🧐
-                collectionView.performBatchUpdates({ })
-            }
+            
+            // avoid weird layout of cells 🧐
+            collectionView.performBatchUpdates({ })
         }
     }
 }
 
 extension RxSectionedCollectionDataSource where SectionModel: TCAIdentifiable, Item: TCAIdentifiable {
-    static var differenceKitReloading: (UICollectionView, inout [Section], Event<[Section]>) -> () {
-        { collectionView, values, observedEvent in
-                let source = values
-                let target = observedEvent.element ?? []
-                let changeset = StagedChangeset(source: source, target: target)
-                
-                print("changeset : \(changeset)")
-                
-                collectionView.reload(using: changeset) { data in
-                    values = data
-                }
-                // this hack avoids weird header placement when reloading cells (the header seems to be floating above the cells ... spooky stuff)
-                collectionView.performBatchUpdates({ })
+    static var differenceKitReloading: ReloadingClosure {
+        return { collectionView, datasource, observedEvent in
+            let source = datasource.values
+            let target = observedEvent.element ?? []
+            let changeset = StagedChangeset(source: source, target: target)
+            
+            print("changeset : \(changeset)")
+            
+            collectionView.reload(using: changeset) { data in
+                datasource.values = data
+            }
+            
+            // this hack avoids weird header placement when reloading cells (the header seems to be floating above the cells ... spooky stuff)
+            collectionView.performBatchUpdates({ })
+                            
         }
     }
 }

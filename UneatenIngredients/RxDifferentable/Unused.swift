@@ -35,7 +35,7 @@ extension TCASection: TCAIdentifiable, ContentIdentifiable, ContentEquatable, Di
 
     var elements: [AnyDifferentiable<Item>] {
         let reloadCondition = self.itemReloadCondition
-        return items.map { AnyDifferentiable(base: $0, contentEquality: reloadCondition) }
+        return items.map { AnyDifferentiable(base: $0, contentEquality: { !reloadCondition($0, $1) }) }
     }
 
      init<C: Swift.Collection>(source: Self, elements: C) where C.Element == AnyDifferentiable<Item> {
@@ -43,6 +43,6 @@ extension TCASection: TCAIdentifiable, ContentIdentifiable, ContentEquatable, Di
     }
 
      func isContentEqual(to source: Self) -> Bool {
-        return modelReloadCondition(self.model, source.model)
+        return !modelReloadCondition(self.model, source.model)
     }
 }
