@@ -117,9 +117,9 @@
 		413C452B24C850D300B3A2D2 /* Datasources */ = {
 			isa = PBXGroup;
 			children = (
+				4157C35F24BB3BE000941098 /* RxCollectionDataSource.swift */,
 				4130BFB024C8513E00713BCF /* RxFlatCollectionDataSource.swift */,
 				4157C35D24BB226900941098 /* RxSectionedDataSource.swift */,
-				4157C35F24BB3BE000941098 /* RxCollectionDataSource.swift */,
 				413C452924C850A100B3A2D2 /* AnyDifferentiable.swift */,
 			);
 			path = Datasources;

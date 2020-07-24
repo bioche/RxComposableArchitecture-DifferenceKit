@@ -153,6 +153,8 @@ class SectionedUneatenViewController: UIViewController {
         
         self.categoriesCollectionView.delegate = self
         
+        
+        
         let itemsBuilder = SectionItemsBuilder<CategoryGroupState, SectionAction, CategoryState, ElementAction>
             .init(items: { $0.elements },
                   itemsReloadCondition: { $0.name != $1.name },

@@ -33,10 +33,12 @@ extension Store {
         where State == [EachState],
         EachState: TCAIdentifiable,
         Action == (EachState.ID, EachAction) {
+
+            let datasource = RxFlatCollectionDataSource(cellCreation: cellCreation, reloadingCondition: Store<EachState, EachAction>.reloadCondition(reloadCondition))
             
-        scopeForEach(reloadCondition: reloadCondition)
-            .debug("scopeForEach")
-            .drive(collectionView.rx.items(dataSource: RxFlatCollectionDataSource(cellCreation: cellCreation, reloadingCondition: Store<EachState, EachAction>.reloadCondition(reloadCondition))))
+            return scopeForEach(reloadCondition: reloadCondition)
+                .debug("scopeForEach")
+                .drive(collectionView.rx.items(dataSource: datasource))
     }
     
     func bindTo<EachState>(collectionView: UICollectionView, reloadCondition: @escaping (EachState, EachState) -> Bool = { _, _ in false }, cellCreation: @escaping CellCreation<EachState, Action>) -> Disposable
@@ -69,7 +71,7 @@ extension Store {
                     }
         }
         
-        let datasource = RxSectionedCollectionDataSource<StoreDifferentiableSection>(cellCreation: { itemsBuilder.cellCreation($0, $1, $2.store) }, headerCreation: { headerBuilder.headerCreation($0, $1, $2.store) })
+        let datasource = RxSectionedCollectionDataSource(cellCreation: itemsBuilder.cellCreation, headerCreation: headerBuilder.headerCreation)
         
         return scopeForEach(reloadCondition: sectionReloadCondition) // --> Only reload when a difference that can't be handled by the stores themselves is detected.
             .debug("scopeForEach")
@@ -79,7 +81,7 @@ extension Store {
                     .scopeForEach()
                     .drive(onNext: { elements = $0 })
                 disposable.dispose()
-                return StoreDifferentiableSection(store: store, itemStores: elements, headerReloadCondition: headerBuilder.headerReloadCondition, itemReloadCondition: itemsBuilder.itemsReloadCondition)
+                return TCASection(model: store, items: elements, modelReloadCondition: Store<SectionState, SectionAction>.reloadCondition(headerBuilder.headerReloadCondition), itemReloadCondition: Store<ItemState, ItemAction>.reloadCondition(itemsBuilder.itemsReloadCondition))
                 }
             }
             .drive(collectionView.rx.items(dataSource: datasource))

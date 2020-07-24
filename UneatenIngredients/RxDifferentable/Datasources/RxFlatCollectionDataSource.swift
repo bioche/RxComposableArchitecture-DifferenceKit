@@ -12,33 +12,24 @@ import RxSwift
 import ComposableArchitecture
 import DifferenceKit
 
-class RxFlatCollectionDataSource<Element: TCAIdentifiable>: NSObject, RxCollectionViewDataSourceType, UICollectionViewDataSource {
+struct DummyShit<Item> {
     
-    let cellCreation: (UICollectionView, IndexPath, Element) -> UICollectionViewCell
-    let reloadingCondition: (Element, Element) -> Bool
-    var values = [AnyDifferentiable<Element>]()
+}
+
+extension DummyShit where Item: TCAIdentifiable {
     
-    init(cellCreation: @escaping (UICollectionView, IndexPath, Element) -> UICollectionViewCell, reloadingCondition: @escaping (Element, Element) -> Bool) {
+}
+
+
+class RxFlatCollectionDataSource<Item>: NSObject, UICollectionViewDataSource {
+    
+    let cellCreation: (UICollectionView, IndexPath, Item) -> UICollectionViewCell
+    let reloadingCondition: (Item, Item) -> Bool
+    var values = [Item]()
+    
+    init(cellCreation: @escaping (UICollectionView, IndexPath, Item) -> UICollectionViewCell, reloadingCondition: @escaping (Item, Item) -> Bool) {
         self.cellCreation = cellCreation
         self.reloadingCondition = reloadingCondition
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, observedEvent: Event<[Element]>) {
-        let reloadingCondition = self.reloadingCondition
-        let source = values
-        let target = observedEvent.element?
-            .map { AnyDifferentiable(base: $0, contentEquality: { !reloadingCondition($0, $1) }) } ?? []
-        let changeset = StagedChangeset(source: source, target: target, section: 0)
-        
-        print("changeset : \(changeset)")
-        
-        UIView.animate(withDuration: 1, animations: {
-            collectionView.reload(using: changeset) { data in
-                self.values = data
-            }
-            // this hack avoids weird header placement when reloading cells (the header seems to be floating above the cells ... spooky stuff)
-            collectionView.performBatchUpdates({ })
-        })
     }
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -50,6 +41,26 @@ class RxFlatCollectionDataSource<Element: TCAIdentifiable>: NSObject, RxCollecti
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        cellCreation(collectionView, indexPath, values[indexPath.row].base)
+        cellCreation(collectionView, indexPath, values[indexPath.row])
+    }
+}
+
+extension RxFlatCollectionDataSource: RxCollectionViewDataSourceType where Item:TCAIdentifiable {
+    func collectionView(_ collectionView: UICollectionView, observedEvent: Event<[Item]>) {
+        let reloadingCondition = self.reloadingCondition
+        let source = values.map { AnyDifferentiable(base: $0, contentEquality: { !reloadingCondition($0, $1) }) }
+        let target = observedEvent.element?
+            .map { AnyDifferentiable(base: $0, contentEquality: { !reloadingCondition($0, $1) }) } ?? []
+        let changeset = StagedChangeset(source: source, target: target, section: 0)
+        
+        print("changeset : \(changeset)")
+        
+        UIView.animate(withDuration: 1, animations: {
+            collectionView.reload(using: changeset) { data in
+                self.values = data.map { $0.base }
+            }
+            // this hack avoids weird header placement when reloading cells (the header seems to be floating above the cells ... spooky stuff)
+            collectionView.performBatchUpdates({ })
+        })
     }
 }
