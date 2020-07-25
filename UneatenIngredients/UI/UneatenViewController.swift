@@ -63,21 +63,24 @@ class UneatenViewController: UIViewController {
         })
         .disposed(by: disposeBag)
         
-        // we bind the store to the table view cells using differenceKit.
-        store // remove the action --> No action on cell
+        let datasource = RxFlatCollectionDataSource<Store<CategoryState, UneatenAction>>(cellCreation: {
+            (collectionView, indexPath, categoryStore) -> UICollectionViewCell in
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "category", for: indexPath) as? UneatenCategoryCollectionViewCell else {
+                assertionFailure()
+                return .init()
+            }
+            
+            let viewStore: ViewStore<UneatenCategoryCollectionViewCell.ViewState, UneatenCategoryCollectionViewCell.ViewAction> = .init(categoryStore.scope(state: { $0.view }, action: { _ in UneatenAction.toggleCategory(index: indexPath.row) }))
+            cell.configure(viewStore: viewStore)
+            return cell
+        })
+        
+        // we bind the store to the table view cells
+        store
             .scope(state: { $0.categoriesStates }) // --> just simplify the store to a simple array of categories
-            .bindTo(collectionView: categoriesCollectionView,
-                    reloadCondition: { !$0.isContentEqual(to: $1) })
-                { (collectionView, indexPath, categoryStore) -> UICollectionViewCell in
-                    guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "category", for: indexPath) as? UneatenCategoryCollectionViewCell else {
-                        assertionFailure()
-                        return .init()
-                    }
-                    
-                    let viewStore: ViewStore<UneatenCategoryCollectionViewCell.ViewState, UneatenCategoryCollectionViewCell.ViewAction> = .init(categoryStore.scope(state: { $0.view }, action: { _ in UneatenAction.toggleCategory(index: indexPath.row) }))
-                    cell.configure(viewStore: viewStore)
-                    return cell
-                }
+            .bind(collectionView: categoriesCollectionView,
+                  to: datasource,
+                  reloadCondition: { !$0.isContentEqual(to: $1) })
             .disposed(by: disposeBag)
         
         // listen to the tapped index

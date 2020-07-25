@@ -4,7 +4,6 @@
 - On top of collection :
 -- View controller to add category with timer to see animation
 
-- Add configuration to datasource (config struct) : configure the application of changesets
 
 Notes :
 reloading items in section :

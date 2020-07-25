@@ -27,27 +27,27 @@ typealias HeaderCreation<HeaderState, HeaderAction>
 extension Store {
     
     // flat. By default no reload of the cell : all goes through the store
-    func bindTo<EachState, EachAction>(collectionView: UICollectionView,
-                                       reloadCondition: @escaping (EachState, EachState) -> Bool = { _, _ in false },
-                                       cellCreation: @escaping CellCreation<EachState, EachAction>) -> Disposable
+    func bind<EachState, EachAction>(collectionView: UICollectionView,
+                                     to datasource: RxFlatCollectionDataSource<Store<EachState, EachAction>>,
+                                       reloadCondition: @escaping (EachState, EachState) -> Bool = { _, _ in false }) -> Disposable
         where State == [EachState],
         EachState: TCAIdentifiable,
         Action == (EachState.ID, EachAction) {
-
-            let datasource = RxFlatCollectionDataSource(cellCreation: cellCreation, reloadingCondition: Store<EachState, EachAction>.reloadCondition(reloadCondition))
             
             return scopeForEach(reloadCondition: reloadCondition)
                 .debug("scopeForEach")
                 .drive(collectionView.rx.items(dataSource: datasource))
     }
     
-    func bindTo<EachState>(collectionView: UICollectionView, reloadCondition: @escaping (EachState, EachState) -> Bool = { _, _ in false }, cellCreation: @escaping CellCreation<EachState, Action>) -> Disposable
+    func bind<EachState>(collectionView: UICollectionView,
+                         to datasource: RxFlatCollectionDataSource<Store<EachState, Action>>,
+                         reloadCondition: @escaping (EachState, EachState) -> Bool = { _, _ in false }) -> Disposable
         where State == [EachState],
         EachState: TCAIdentifiable {
             scope(state: { $0 }, action: { $1 })
-                .bindTo(collectionView: collectionView,
-                        reloadCondition: reloadCondition,
-                        cellCreation: cellCreation)
+                .bind(collectionView: collectionView,
+                      to: datasource,
+                      reloadCondition: reloadCondition)
     }
     
     func bind<SectionState, SectionAction, ItemState, ItemAction>
