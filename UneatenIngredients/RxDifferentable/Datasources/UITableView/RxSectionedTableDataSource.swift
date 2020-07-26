@@ -9,6 +9,7 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import ComposableArchitecture
 import DifferenceKit
 
 extension Array {
@@ -30,52 +31,44 @@ extension Array {
 }
 
 /// Allows for simple table view animations on changes based on DifferenceKit. (Avoids the heaviness of RxDatasource)
-class RxSectionedDataSource<Section: DifferentiableSection>: NSObject, RxTableViewDataSourceType, UITableViewDataSource, SectionedViewDataSourceType where Section.Collection.Index == Int {
+class RxSectionedTableDataSource<SectionModel, Item>: NSObject, RxTableViewDataSourceType, UITableViewDataSource, SectionedViewDataSourceType {
     
-    // The Element of RxTableViewDatasource represents the whole datasource
+    typealias Section = TCASection<SectionModel, Item>
     typealias Element = [Section]
-    typealias CellModel = Section.Collection.Element
+    typealias CellModel = Item
+    typealias ReloadingClosure = (UITableView, RxSectionedTableDataSource, Event<[Section]>) -> ()
     
-    let animation: UITableView.RowAnimation
     let cellCreation: (UITableView, IndexPath, CellModel) -> UITableViewCell
     let headerCreation: ((UITableView, Int, Section) -> UIView?)?
     let headerTitlesSource: ((UITableView, Int, Section) -> String?)?
+    let reloading: ReloadingClosure
+    
     var values: Element = []
     
-    private let disposeBag = DisposeBag()
-    
-    init(with animation: UITableView.RowAnimation = .fade,
-         cellCreation: @escaping (UITableView, IndexPath, CellModel) -> UITableViewCell,
-         headerCreation: ((UITableView, Int, Section) -> UIView?)? = nil) {
-        self.animation = animation
+    init(cellCreation: @escaping (UITableView, IndexPath, CellModel) -> UITableViewCell,
+         headerCreation: ((UITableView, Int, Section) -> UIView?)? = nil,
+         reloading: @escaping ReloadingClosure) {
         self.cellCreation = cellCreation
         self.headerCreation = headerCreation
         self.headerTitlesSource = nil
+        self.reloading = reloading
     }
     
-    init(with animation: UITableView.RowAnimation = .fade,
-         cellCreation: @escaping (UITableView, IndexPath, CellModel) -> UITableViewCell,
-         headerTitlesSource: ((UITableView, Int, Section) -> String?)? = nil) {
-        self.animation = animation
+    init(cellCreation: @escaping (UITableView, IndexPath, CellModel) -> UITableViewCell,
+         headerTitlesSource: ((UITableView, Int, Section) -> String?)? = nil,
+         reloading: @escaping ReloadingClosure) {
         self.cellCreation = cellCreation
         self.headerTitlesSource = headerTitlesSource
         self.headerCreation = nil
+        self.reloading = reloading
     }
     
     func tableView(_ tableView: UITableView, observedEvent: RxSwift.Event<Element>) {
-        let source = values
-        let target = observedEvent.element ?? []
-        let changeset = StagedChangeset(source: source, target: target)
-        
-        tableView.isEditing = false
-        
-        tableView.reload(using: changeset, with: animation) { data in
-            self.values = data
-        }
+        reloading(tableView, self, observedEvent)
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        values[section].elements.count
+        values[section].items.count
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -97,7 +90,7 @@ class RxSectionedDataSource<Section: DifferentiableSection>: NSObject, RxTableVi
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        cellCreation(tableView, indexPath, values[indexPath.section].elements[indexPath.row])
+        cellCreation(tableView, indexPath, values[indexPath.section].items[indexPath.row])
     }
 
     func section(at index: Int) -> Section {
@@ -105,10 +98,26 @@ class RxSectionedDataSource<Section: DifferentiableSection>: NSObject, RxTableVi
     }
     
     func cellModel(at indexPath: IndexPath) -> CellModel {
-        section(at: indexPath.section).elements[indexPath.row]
+        section(at: indexPath.section).items[indexPath.row]
     }
     
     func model(at indexPath: IndexPath) throws -> Any {
         cellModel(at: indexPath)
+    }
+}
+
+extension RxSectionedTableDataSource where SectionModel: TCAIdentifiable, Item: TCAIdentifiable {
+    static func differenceKitReloading(animation: UITableView.RowAnimation) -> ReloadingClosure {
+        return { tableView, datasource, observedEvent in
+            let source = datasource.values
+            let target = observedEvent.element ?? []
+            let changeset = StagedChangeset(source: source, target: target)
+            
+            print("changeset : \(changeset)")
+            
+            tableView.reload(using: changeset, with: animation) { data in
+                datasource.values = data
+            }
+        }
     }
 }

@@ -18,8 +18,6 @@ public extension ContentIdentifiable where Self: TCAIdentifiable {
     }
 }
 
-extension String: Differentiable { }
-
 class RxSectionedCollectionDataSource<SectionModel, Item>: NSObject, RxCollectionViewDataSourceType, UICollectionViewDataSource, SectionedViewDataSourceType {
     
     typealias Section = TCASection<SectionModel, Item>

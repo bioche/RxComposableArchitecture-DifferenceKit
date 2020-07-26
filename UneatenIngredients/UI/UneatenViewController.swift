@@ -73,14 +73,14 @@ class UneatenViewController: UIViewController {
             let viewStore: ViewStore<UneatenCategoryCollectionViewCell.ViewState, UneatenCategoryCollectionViewCell.ViewAction> = .init(categoryStore.scope(state: { $0.view }, action: { _ in UneatenAction.toggleCategory(index: indexPath.row) }))
             cell.configure(viewStore: viewStore)
             return cell
-        })
+        }, reloadingClosure: RxFlatCollectionDataSource.differenceKitReloading)
         
         // we bind the store to the table view cells
         store
             .scope(state: { $0.categoriesStates }) // --> just simplify the store to a simple array of categories
             .bind(collectionView: categoriesCollectionView,
                   to: datasource,
-                  reloadCondition: { !$0.isContentEqual(to: $1) })
+                  reloadCondition: { $0.shouldBeReloaded(for: $1) })
             .disposed(by: disposeBag)
         
         // listen to the tapped index
@@ -90,9 +90,15 @@ class UneatenViewController: UIViewController {
 //        .disposed(by: disposeBag)
         
         // Just a dummy test of the cell size increase
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
-//            self.viewStore.send(.append(text: " bla bla bla", keys: ["chickenKey"]))
-//        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
+            self.viewStore.send(.append(text: " bla bla bla", keys: ["chickenKey"]))
+        }
+    }
+}
+
+extension CategoryState {
+    fileprivate func shouldBeReloaded(for source: Self) -> Bool {
+        true
     }
 }
 

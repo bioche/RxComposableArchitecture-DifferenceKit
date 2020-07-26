@@ -12,34 +12,35 @@ import RxSwift
 import ComposableArchitecture
 import DifferenceKit
 
-class RxFlatCollectionDataSource<Item>: NSObject, RxCollectionViewDataSourceType, UICollectionViewDataSource {
+public class RxFlatCollectionDataSource<ItemModel>: NSObject, RxCollectionViewDataSourceType, UICollectionViewDataSource {
     
-    let cellCreation: (UICollectionView, IndexPath, Item) -> UICollectionViewCell
+    let cellCreation: (UICollectionView, IndexPath, ItemModel) -> UICollectionViewCell
     let reloading: ReloadingClosure
     var values = [Item]()
     
+    typealias Item = TCAItem<ItemModel>
     typealias ReloadingClosure = (UICollectionView, RxFlatCollectionDataSource, Event<[Item]>) -> ()
     
-    init(cellCreation: @escaping (UICollectionView, IndexPath, Item) -> UICollectionViewCell,
+    init(cellCreation: @escaping (UICollectionView, IndexPath, ItemModel) -> UICollectionViewCell,
          reloadingClosure: @escaping ReloadingClosure = fullReloading) {
         self.cellCreation = cellCreation
         self.reloading = reloadingClosure
     }
     
-    func collectionView(_ collectionView: UICollectionView, observedEvent: Event<[Item]>) {
+    public func collectionView(_ collectionView: UICollectionView, observedEvent: Event<[Item]>) {
         reloading(collectionView, self, observedEvent)
     }
     
-    func numberOfSections(in collectionView: UICollectionView) -> Int {
+    public func numberOfSections(in collectionView: UICollectionView) -> Int {
         1
     }
     
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         values.count
     }
     
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        cellCreation(collectionView, indexPath, values[indexPath.row])
+    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        cellCreation(collectionView, indexPath, values[indexPath.row].model)
     }
     
     static var fullReloading: ReloadingClosure {
@@ -53,7 +54,7 @@ class RxFlatCollectionDataSource<Item>: NSObject, RxCollectionViewDataSourceType
     }
 }
 
-extension RxFlatCollectionDataSource where Item: TCAIdentifiable&Differentiable {
+extension RxFlatCollectionDataSource where ItemModel: TCAIdentifiable {
     static var differenceKitReloading: ReloadingClosure {
         return { collectionView, datasource, observedEvent in
             let source = datasource.values

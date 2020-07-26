@@ -8,7 +8,6 @@
 
 import UIKit
 import ComposableArchitecture
-import DifferenceKit
 import RxCocoa
 import RxSwift
 
@@ -40,27 +39,22 @@ extension CategoryGroupState: TCAIdentifiable {
     }
 }
 
-extension CategoryGroupState: DifferentiableSection {
-    init<C>(source: Self, elements: C) where C : Collection, C.Element == Self.Collection.Element {
-        switch source {
-        case .standaloneCategories:
-            self = .standaloneCategories(Array(elements))
-        case .topCategory(var topCategory):
-            topCategory.substates = Array(elements)
-            self = .topCategory(topCategory)
-        }
+extension CategoryState {
+    fileprivate func shouldBeReloaded(for source: Self) -> Bool {
+        self.name != source.name
     }
+}
+
+extension CategoryGroupState {
     
-    func isContentEqual(to source: Self) -> Bool {
-//        elements.count == source.elements.count &&
-//        zip(elements, source.elements).allSatisfy { $0.isContentEqual(to: $1) }
+    fileprivate func shouldBeReloaded(for source: Self) -> Bool {
         switch (self, source) {
         case (.standaloneCategories, .standaloneCategories):
-            return true
-        case let (.topCategory(topCategory), .topCategory(sourceTopCategory)):
-            return topCategory.isContentEqual(to: sourceTopCategory)
-        default:
             return false
+        case let (.topCategory(topCategory), .topCategory(sourceTopCategory)):
+            return topCategory.shouldBeReloaded(for: sourceTopCategory)
+        default:
+            return true
         }
     }
     
@@ -75,19 +69,7 @@ extension CategoryGroupState: DifferentiableSection {
             return topCategory.substates
         }
     }
-    
-    /// When the content of the header itself changes
-    /// or elements below have a change that calls for update of cells, we return true.
-    /// Then the stores will be given to differenceKit so that it updates the cells / header that need to.
-    func datasourceNeedsUpdate(for new: Self) -> Bool {
-        !isContentEqual(to: new)
-            || elements.count != new.elements.count
-            || !zip(elements, new.elements)
-                .allSatisfy {
-                    $0.isContentEqual(to: $1)
-                    && $0.differenceIdentifier == $1.differenceIdentifier
-                }
-    }
+
 }
 
 class SectionedUneatenViewController: UIViewController {
@@ -174,8 +156,8 @@ class SectionedUneatenViewController: UIViewController {
         
         let itemsBuilder = SectionItemsBuilder<CategoryGroupState, SectionAction, CategoryState, ElementAction>
             .init(items: { $0.elements },
-                  itemsReloadCondition: { $0.name != $1.name },
-                  headerReloadCondition: { _, _ in false },
+                  itemsReloadCondition: { $0.shouldBeReloaded(for: $1) },
+                  headerReloadCondition: { $0.shouldBeReloaded(for: $1) },
                   actionScoping: { id, _ in SectionAction.toggleSubcategoryWithId(id) }
                   )
 
