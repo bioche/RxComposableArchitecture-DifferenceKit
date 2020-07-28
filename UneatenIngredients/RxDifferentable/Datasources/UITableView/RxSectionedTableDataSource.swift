@@ -90,7 +90,7 @@ class RxSectionedTableDataSource<SectionModel, Item>: NSObject, RxTableViewDataS
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        cellCreation(tableView, indexPath, values[indexPath.section].items[indexPath.row])
+        cellCreation(tableView, indexPath, values[indexPath.section].items[indexPath.row].model)
     }
 
     func section(at index: Int) -> Section {
@@ -98,7 +98,7 @@ class RxSectionedTableDataSource<SectionModel, Item>: NSObject, RxTableViewDataS
     }
     
     func cellModel(at indexPath: IndexPath) -> CellModel {
-        section(at: indexPath.section).items[indexPath.row]
+        section(at: indexPath.section).items[indexPath.row].model
     }
     
     func model(at indexPath: IndexPath) throws -> Any {

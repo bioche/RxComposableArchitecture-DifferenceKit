@@ -57,7 +57,7 @@ class RxSectionedCollectionDataSource<SectionModel, Item>: NSObject, RxCollectio
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        cellCreation(collectionView, indexPath, values[indexPath.section].items[indexPath.row])
+        cellCreation(collectionView, indexPath, values[indexPath.section].items[indexPath.row].model)
     }
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
@@ -72,7 +72,7 @@ class RxSectionedCollectionDataSource<SectionModel, Item>: NSObject, RxCollectio
     }
     
     func cellModel(at indexPath: IndexPath) -> CellModel {
-        section(at: indexPath.section).items[indexPath.row]
+        section(at: indexPath.section).items[indexPath.row].model
     }
     
     func model(at indexPath: IndexPath) throws -> Any {

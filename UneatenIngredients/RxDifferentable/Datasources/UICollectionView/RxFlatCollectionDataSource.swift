@@ -16,12 +16,13 @@ public class RxFlatCollectionDataSource<ItemModel>: NSObject, RxCollectionViewDa
     
     let cellCreation: (UICollectionView, IndexPath, ItemModel) -> UICollectionViewCell
     let reloading: ReloadingClosure
-    var values = [Item]()
     
-    typealias Item = TCAItem<ItemModel>
-    typealias ReloadingClosure = (UICollectionView, RxFlatCollectionDataSource, Event<[Item]>) -> ()
+    public var values = [Item]()
     
-    init(cellCreation: @escaping (UICollectionView, IndexPath, ItemModel) -> UICollectionViewCell,
+    public typealias Item = TCAItem<ItemModel>
+    public typealias ReloadingClosure = (UICollectionView, RxFlatCollectionDataSource, Event<[Item]>) -> ()
+    
+    public init(cellCreation: @escaping (UICollectionView, IndexPath, ItemModel) -> UICollectionViewCell,
          reloadingClosure: @escaping ReloadingClosure = fullReloading) {
         self.cellCreation = cellCreation
         self.reloading = reloadingClosure
@@ -43,7 +44,7 @@ public class RxFlatCollectionDataSource<ItemModel>: NSObject, RxCollectionViewDa
         cellCreation(collectionView, indexPath, values[indexPath.row].model)
     }
     
-    static var fullReloading: ReloadingClosure {
+    public static var fullReloading: ReloadingClosure {
         return { collectionView, datasource, observedEvent in
             datasource.values = observedEvent.element ?? []
             collectionView.reloadData()

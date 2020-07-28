@@ -10,9 +10,9 @@ import Foundation
 
 public struct TCAItem<Model> {
     let model: Model
-    let modelReloadCondition: (Model, Model) -> Bool
+    let modelReloadCondition: ReloadCondition<Model>
     
-    init(model: Model, modelReloadCondition: @escaping (Model, Model) -> Bool) {
+    init(model: Model, modelReloadCondition: @escaping ReloadCondition<Model>) {
         self.model = model
         self.modelReloadCondition = modelReloadCondition
     }
