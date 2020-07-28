@@ -8,9 +8,19 @@
 
 import UIKit
 import ComposableArchitecture
+import ComposableDifferenceKitDatasources
 import DifferenceKit
 import RxCocoa
 import RxSwift
+
+extension RxFlatCollectionDataSource where ItemModel: TCAIdentifiable {
+    static var standardLayoutDifferenceKitReloading: ReloadingClosure {
+        return {
+            RxFlatCollectionDataSource.differenceKitReloading($0, $1, $2)
+            $0.performBatchUpdates({ })
+        }
+    }
+}
 
 class UneatenViewController: UIViewController {
     /// The state of the view. Should be as close as possible to the view contents. (just like PureAir Outputs)
@@ -73,14 +83,14 @@ class UneatenViewController: UIViewController {
             let viewStore: ViewStore<UneatenCategoryCollectionViewCell.ViewState, UneatenCategoryCollectionViewCell.ViewAction> = .init(categoryStore.scope(state: { $0.view }, action: { _ in UneatenAction.toggleCategory(index: indexPath.row) }))
             cell.configure(viewStore: viewStore)
             return cell
-        }, reloadingClosure: RxFlatCollectionDataSource.differenceKitReloading)
+        }, reloadingClosure: RxFlatCollectionDataSource.standardLayoutDifferenceKitReloading)
         
         // we bind the store to the table view cells
         store
             .scope(state: { $0.categoriesStates }) // --> just simplify the store to a simple array of categories
             .bind(collectionView: categoriesCollectionView,
                   to: datasource,
-                  reloadCondition: { $0.shouldBeReloaded(for: $1) })
+                  reloadCondition: CategoryState.reloadCondition)
             .disposed(by: disposeBag)
         
         // listen to the tapped index
@@ -97,9 +107,8 @@ class UneatenViewController: UIViewController {
 }
 
 extension CategoryState {
-    fileprivate func shouldBeReloaded(for source: Self) -> Bool {
-        true
-    }
+    
+    fileprivate static var reloadCondition: ReloadCondition<Self> { .reloadWhen { $0.name != $1.name } }
 }
 
 extension UneatenState {

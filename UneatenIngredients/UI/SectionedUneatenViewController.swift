@@ -8,8 +8,18 @@
 
 import UIKit
 import ComposableArchitecture
+import ComposableDifferenceKitDatasources
 import RxCocoa
 import RxSwift
+
+extension RxSectionedCollectionDataSource where SectionModel: TCAIdentifiable, CellModel: TCAIdentifiable {
+    static var standardLayoutDifferenceKitReloading: ReloadingClosure {
+        return {
+            RxSectionedCollectionDataSource.differenceKitReloading($0, $1, $2)
+            $0.performBatchUpdates({ })
+        }
+    }
+}
 
 enum CategoryGroupState: Equatable {
     case standaloneCategories([CategoryState])
@@ -40,21 +50,21 @@ extension CategoryGroupState: TCAIdentifiable {
 }
 
 extension CategoryState {
-    fileprivate func shouldBeReloaded(for source: Self) -> Bool {
-        self.name != source.name
-    }
+    fileprivate static var reloadCondition: ReloadCondition<Self> { .reloadWhen { $0.name != $1.name } }
 }
 
 extension CategoryGroupState {
     
-    fileprivate func shouldBeReloaded(for source: Self) -> Bool {
-        switch (self, source) {
-        case (.standaloneCategories, .standaloneCategories):
-            return false
-        case let (.topCategory(topCategory), .topCategory(sourceTopCategory)):
-            return topCategory.shouldBeReloaded(for: sourceTopCategory)
-        default:
-            return true
+    fileprivate static var reloadCondition: ReloadCondition<Self> {
+        return .reloadWhen {
+            switch ($0, $1) {
+            case (.standaloneCategories, .standaloneCategories):
+                return false
+            case let (.topCategory(topCategory), .topCategory(sourceTopCategory)):
+                return CategoryState.reloadCondition(topCategory, sourceTopCategory)
+            default:
+                return true
+            }
         }
     }
     
@@ -152,12 +162,12 @@ class SectionedUneatenViewController: UIViewController {
             let viewStore = ViewStore(sectionStore.scope(state: { $0.view }, action: { (_: SectionHeaderView.ViewAction) in .toggleTopCategory }))
             headerView.configure(viewStore: viewStore)
             return headerView
-        }, reloading: RxSectionedCollectionDataSource.differenceKitReloading)
+        }, reloading: RxSectionedCollectionDataSource.standardLayoutDifferenceKitReloading)
         
         let itemsBuilder = SectionItemsBuilder<CategoryGroupState, SectionAction, CategoryState, ElementAction>
             .init(items: { $0.elements },
-                  itemsReloadCondition: { $0.shouldBeReloaded(for: $1) },
-                  headerReloadCondition: { $0.shouldBeReloaded(for: $1) },
+                  itemsReloadCondition: CategoryState.reloadCondition,
+                  headerReloadCondition: CategoryGroupState.reloadCondition,
                   actionScoping: { id, _ in SectionAction.toggleSubcategoryWithId(id) }
                   )
 
